@@ -1,16 +1,16 @@
 export enum Color {
-  Light,
-  Dark,
+	Light,
+	Dark,
 }
 
 export enum Species {
-  Drone,
-  Worker,
-  Nurse,
-  Explorer,
-  Builder,
-  Guard,
-  Queen,
+	Drone,
+	Worker,
+	Nurse,
+	Explorer,
+	Builder,
+	Guard,
+	Queen,
 }
 
 export type Piece =
@@ -18,6 +18,6 @@ export type Piece =
   | { type: "Wall", content: undefined }
 
 export interface Pos {
-  q: number,
-  r: number,
+	q: number,
+	r: number,
 }
