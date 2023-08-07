@@ -23,14 +23,14 @@ extern "C" {
 pub struct State {
     #[wasm_bindgen(getter_with_clone)]
     pub board: Board,
-    turn: Color,
+    pub turn: Color,
 }
 
 #[cfg(not(feature = "wasm-bindgen"))]
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct State {
     pub board: Board,
-    turn: Color,
+    pub turn: Color,
 }
 
 #[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
@@ -49,12 +49,12 @@ impl State {
         array.unchecked_into::<ActionArray>()
     }
 
-    pub fn turn(&self) -> Color {
-        self.turn
-    }
-
     pub fn perform(&mut self, _action: Action) -> Result<()> {
         todo!()
+    }
+
+    pub fn end_turn(&mut self) {
+        self.turn = !self.turn;
     }
 }
 

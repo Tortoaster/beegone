@@ -93,104 +93,59 @@ impl Piece {
 // Boilerplate to allow non-C-style enum `Piece`
 #[cfg(feature = "wasm-bindgen")]
 mod wasm {
-    use wasm_bindgen::prelude::*;
+    use wasm_bindgen::{
+        convert::{FromWasmAbi, IntoWasmAbi, OptionFromWasmAbi, OptionIntoWasmAbi},
+        describe::WasmDescribe,
+        prelude::*,
+    };
 
-    use crate::Bee;
+    use crate::Piece;
 
-    impl wasm_bindgen::convert::IntoWasmAbi for super::Piece {
-        type Abi = <Piece as wasm_bindgen::convert::IntoWasmAbi>::Abi;
-        #[inline]
-        fn into_abi(self) -> Self::Abi {
-            match Piece::try_from(self) {
-                Ok(value) => value.into_abi(),
-                Err(_) => wasm_bindgen::throw_str("failed to serialize enum"),
-            }
-        }
-    }
+    #[wasm_bindgen(typescript_custom_section)]
+    const PIECE: &str = r"export type Piece =
+    | { tag: 'Bee'; content: [Color, Species] }
+    | { tag: 'Wall'; content: undefined };";
 
-    impl wasm_bindgen::convert::FromWasmAbi for super::Piece {
-        type Abi = <Piece as wasm_bindgen::convert::FromWasmAbi>::Abi;
+    impl FromWasmAbi for Piece {
+        type Abi = <JsValue as FromWasmAbi>::Abi;
+
         #[inline]
         unsafe fn from_abi(js: Self::Abi) -> Self {
-            match Piece::from_abi(js).try_into() {
+            match serde_wasm_bindgen::from_value(JsValue::from_abi(js)) {
                 Ok(value) => value,
                 Err(_) => wasm_bindgen::throw_str("failed to deserialize enum"),
             }
         }
     }
 
-    impl wasm_bindgen::convert::OptionFromWasmAbi for super::Piece {
+    impl IntoWasmAbi for Piece {
+        type Abi = <JsValue as IntoWasmAbi>::Abi;
+
         #[inline]
-        fn is_none(val: &Self::Abi) -> bool {
-            Piece::is_none(val)
-        }
-    }
-
-    impl wasm_bindgen::convert::OptionIntoWasmAbi for super::Piece {
-        #[inline]
-        fn none() -> Self::Abi {
-            Piece::none()
-        }
-    }
-
-    impl wasm_bindgen::describe::WasmDescribe for super::Piece {
-        fn describe() {
-            Piece::describe()
-        }
-    }
-
-    #[wasm_bindgen]
-    pub struct Piece {
-        tag: PieceTag,
-        content: PieceContent,
-    }
-
-    #[wasm_bindgen]
-    #[derive(Copy, Clone)]
-    pub enum PieceTag {
-        Bee,
-        Wall,
-    }
-
-    #[wasm_bindgen]
-    extern "C" {
-        #[wasm_bindgen(typescript_type = "[Bee] | undefined")]
-        type PieceContent;
-    }
-
-    impl TryFrom<Piece> for super::Piece {
-        type Error = serde_wasm_bindgen::Error;
-
-        fn try_from(value: Piece) -> Result<Self, Self::Error> {
-            match value.tag {
-                PieceTag::Bee => {
-                    let (param0,) = serde_wasm_bindgen::from_value::<(Bee,)>(value.content.obj)?;
-                    Ok(super::Piece::Bee(param0))
-                }
-                PieceTag::Wall => Ok(super::Piece::Wall),
+        fn into_abi(self) -> Self::Abi {
+            match serde_wasm_bindgen::to_value(&self) {
+                Ok(value) => value.into_abi(),
+                Err(_) => wasm_bindgen::throw_str("failed to serialize enum"),
             }
         }
     }
 
-    impl TryFrom<super::Piece> for Piece {
-        type Error = serde_wasm_bindgen::Error;
+    impl OptionFromWasmAbi for Piece {
+        fn is_none(abi: &Self::Abi) -> bool {
+            unsafe { JsValue::from_abi(*abi).is_null() }
+        }
+    }
 
-        fn try_from(value: super::Piece) -> Result<Self, Self::Error> {
-            let tag = match value {
-                super::Piece::Bee(_) => PieceTag::Bee,
-                super::Piece::Wall => PieceTag::Wall,
-            };
+    impl OptionIntoWasmAbi for Piece {
+        #[inline]
+        fn none() -> Self::Abi {
+            JsValue::NULL.into_abi()
+        }
+    }
 
-            let content = match value {
-                super::Piece::Bee(param0) => PieceContent {
-                    obj: serde_wasm_bindgen::to_value(&(param0,))?,
-                },
-                super::Piece::Wall => PieceContent {
-                    obj: JsValue::undefined(),
-                },
-            };
-
-            Ok(Piece { tag, content })
+    impl WasmDescribe for Piece {
+        fn describe() {
+            JsValue::describe()
         }
     }
 }

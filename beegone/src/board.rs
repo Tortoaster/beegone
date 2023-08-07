@@ -8,9 +8,35 @@ pub struct Board {
     pieces: BTreeMap<Pos, Piece>,
 }
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+impl Board {
+    pub fn get(&self, pos: &Pos) -> Option<Piece> {
+        self.pieces.get(pos).copied()
+    }
+
+    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) {
+        match piece {
+            None => {
+                self.pieces.remove(&pos);
+            }
+            Some(piece) => {
+                self.pieces
+                    .entry(pos)
+                    .and_modify(|p| *p = piece)
+                    .or_insert(piece);
+            }
+        }
+    }
+
+    pub fn within_bounds(pos: Pos) -> bool {
+        (pos - Self::CENTER).distance() <= Self::RADIUS as i32
+    }
+}
+
 impl Board {
     const DIAMETER: usize = 7;
-    const RADIUS: usize = Self::DIAMETER / 2;
+    pub const RADIUS: usize = Self::DIAMETER / 2;
+    const CENTER: Pos = Board::D4;
 
     const A4: Pos = Pos { q: -3, r: 0 };
     const A5: Pos = Pos { q: -3, r: 1 };
@@ -103,17 +129,6 @@ impl Board {
 
     pub fn positions() -> impl Iterator<Item = Pos> {
         Self::POSITIONS.into_iter()
-    }
-}
-
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-impl Board {
-    pub fn get(&self, pos: &Pos) -> Option<Piece> {
-        self.pieces.get(pos).copied()
-    }
-
-    pub fn within_bounds(pos: Pos) -> bool {
-        (pos - Pos::default()).distance() <= Self::RADIUS as i32
     }
 }
 
