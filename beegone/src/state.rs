@@ -1,21 +1,57 @@
-use crate::action::{Action, Actions, SpecialActions};
-use crate::board::Board;
-use crate::error::Result;
-use crate::iter::IteratorExt;
-use crate::piece::{Color, Piece};
-use crate::pos::{Pos, Shift};
+#[cfg(feature = "wasm-bindgen")]
+use wasm_bindgen::prelude::*;
 
-#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct State {
-    board: Board,
-    turn: Color,
+use crate::{
+    action::{Action, Actions, SpecialActions},
+    board::Board,
+    error::Result,
+    iter::IteratorExt,
+    piece::{Color, Piece},
+    pos::{Pos, Shift},
+};
+
+#[cfg(feature = "wasm-bindgen")]
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(typescript_type = "Array<Action>")]
+    pub type ActionArray;
 }
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub struct State {
+    // TODO: cfg
+    #[wasm_bindgen(getter_with_clone)]
+    pub board: Board,
+    pub turn: Color,
+}
+
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
 impl State {
+    #[cfg_attr(feature = "wasm-bindgen", wasm_bindgen(constructor))]
     pub fn new() -> Self {
         State::default()
     }
 
+    #[cfg(feature = "wasm-bindgen")]
+    pub fn all_actions_from(&self, from: Pos) -> ActionArray {
+        let array: js_sys::Array = self
+            .actions_from(from)
+            .map(|action| serde_wasm_bindgen::to_value(&action).unwrap())
+            .collect();
+        array.unchecked_into::<ActionArray>()
+    }
+
+    pub fn turn(&self) -> Color {
+        self.turn
+    }
+
+    pub fn perform(&mut self, _action: Action) -> Result<()> {
+        todo!()
+    }
+}
+
+impl State {
     pub fn actions<'a>(&'a self) -> impl Iterator<Item = Action> + 'a {
         Board::positions().flat_map(|pos| self.actions_from(pos))
     }
@@ -42,7 +78,8 @@ impl State {
             .filter(move |pos| self.board.get(pos).is_none())
             .map(move |adj| Action::Move(from, adj));
 
-        // All bees can jump over adjacent bees of the same color, as long as the tile they land on is empty
+        // All bees can jump over adjacent bees of the same color, as long as the tile
+        // they land on is empty
         let leaps = Shift::directions()
             .filter(move |shift| {
                 self.board
@@ -56,7 +93,8 @@ impl State {
             .filter(move |pos| self.board.get(pos).is_none())
             .map(move |pos| Action::Move(from, pos));
 
-        // Most bees can capture weaker adjacent pieces of the opposite color, and builders can capture walls
+        // Most bees can capture weaker adjacent pieces of the opposite color, and
+        // builders can capture walls
         let captures = from
             .adjacent()
             .filter(move |adj| {
@@ -71,24 +109,24 @@ impl State {
 
         // let specials = match bee.species {
         //     // Drones, workers and guards have no special power
-        //     Species::Drone | Species::Worker | Species::Guard => SpecialActions::None,
-        //     // Nurses can promote adjacent workers to explorers, builders, or guards
-        //     Species::Nurse => SpecialActions::Nurse(
-        //         from.adjacent()
+        //     Species::Drone | Species::Worker | Species::Guard =>
+        // SpecialActions::None,     // Nurses can promote adjacent workers to
+        // explorers, builders, or guards     Species::Nurse =>
+        // SpecialActions::Nurse(         from.adjacent()
         //             .filter(move |adj| {
         //                 self.pieces
         //                     .get(adj)
         //                     .map(|piece| match piece {
-        //                         Piece::Bee(bee) => color == bee.color && *s == Species::Worker,
-        //                         Piece::Wall => false,
+        //                         Piece::Bee(bee) => color == bee.color && *s ==
+        // Species::Worker,                         Piece::Wall => false,
         //                     })
         //                     .unwrap_or_default()
         //             })
         //             .flat_map(move |adj| {
         //                 vec![Species::Explorer, Species::Builder, Species::Guard]
         //                     .into_iter()
-        //                     .map(move |species| Action::Spawn(adj, Piece::Bee(*color, species)))
-        //             }),
+        //                     .map(move |species| Action::Spawn(adj, Piece::Bee(*color,
+        // species)))             }),
         //     ),
         //     // Explorers can move any number of tiles in a straight line, as long as
         //     // they are all empty, and optionally capture on the last tile TODO
@@ -108,12 +146,12 @@ impl State {
         //             .filter(move |adj2| self.in_bounds(*adj2))
         //             .filter(move |adj2| self.pieces.get(adj2).is_none())
         //             .map(move |adj| {
-        //                 Action::Spawn(adj, Piece::Bee(Bee::new(*color, Species::Drone)))
-        //             });
+        //                 Action::Spawn(adj, Piece::Bee(Bee::new(*color,
+        // Species::Drone)))             });
         //
         //         let fertilized = from.adjacent().any(|adj| {
-        //             self.pieces.get(&adj) == Some(&Piece::Bee(Bee::new(color, Species::Drone)))
-        //         });
+        //             self.pieces.get(&adj) == Some(&Piece::Bee(Bee::new(color,
+        // Species::Drone)))         });
         //
         //         let workers = if fertilized {
         //             Box::new(
@@ -121,8 +159,8 @@ impl State {
         //                     .filter(move |adj2| self.in_bounds(*adj2))
         //                     .filter(move |adj2| self.pieces.get(adj2).is_none())
         //                     .map(move |adj| {
-        //                         Action::Spawn(adj, Piece::Bee(Bee::new(*color, Species::Worker)))
-        //                     }),
+        //                         Action::Spawn(adj, Piece::Bee(Bee::new(*color,
+        // Species::Worker)))                     }),
         //             )
         //         } else {
         //             Box::new(iter::empty()) as Box<dyn Iterator<Item = Action>>
@@ -133,13 +171,5 @@ impl State {
         // };
 
         Actions::new(steps, leaps, captures, specials)
-    }
-
-    pub fn perform(&mut self, _action: Action) -> Result<()> {
-        todo!()
-    }
-
-    pub fn turn(&self) -> Color {
-        self.turn
     }
 }

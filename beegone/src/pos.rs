@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Pos {
     pub q: i32,
@@ -7,20 +9,6 @@ pub struct Pos {
 }
 
 impl Pos {
-    pub fn from_cartesian(pos: [f32; 2]) -> Self {
-        let q = (2.0 / 3.0 * pos[0]).round() as i32;
-        let r = (-1.0 / 3.0 * pos[0] + 3f32.sqrt() / 3.0 * pos[1]).round() as i32;
-
-        Pos { q, r }
-    }
-
-    pub fn into_cartesian(self) -> [f32; 2] {
-        let x = 1.5 * self.q as f32;
-        let y = 3f32.sqrt() / 2.0 * self.q as f32 + 3f32.sqrt() * self.r as f32;
-
-        [x, y]
-    }
-
     pub fn adjacent(self) -> impl Iterator<Item = Pos> {
         Shift::directions().map(move |shift| self + shift)
     }

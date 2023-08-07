@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
-use crate::piece::Piece;
-use crate::pos::Pos;
+use crate::{piece::Piece, pos::Pos};
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Board {
     pieces: BTreeMap<Pos, Piece>,

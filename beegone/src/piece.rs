@@ -1,5 +1,7 @@
 use std::ops::Not;
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Color {
     #[default]
@@ -18,6 +20,8 @@ impl Not for Color {
     }
 }
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Species {
     Drone,
@@ -29,6 +33,8 @@ pub enum Species {
     Queen,
 }
 
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Bee {
     pub color: Color,
@@ -42,6 +48,8 @@ impl Bee {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "tag", content = "content"))]
 pub enum Piece {
     Bee(Bee),
     Wall,
@@ -78,6 +86,111 @@ impl Piece {
         match self {
             Piece::Bee(bee) => Some(bee.color),
             Piece::Wall => None,
+        }
+    }
+}
+
+// Boilerplate to allow non-C-style enum `Piece`
+#[cfg(feature = "wasm-bindgen")]
+mod wasm {
+    use wasm_bindgen::prelude::*;
+
+    use crate::Bee;
+
+    impl wasm_bindgen::convert::IntoWasmAbi for super::Piece {
+        type Abi = <Piece as wasm_bindgen::convert::IntoWasmAbi>::Abi;
+        #[inline]
+        fn into_abi(self) -> Self::Abi {
+            match Piece::try_from(self) {
+                Ok(value) => value.into_abi(),
+                Err(_) => wasm_bindgen::throw_str("failed to serialize enum"),
+            }
+        }
+    }
+
+    impl wasm_bindgen::convert::FromWasmAbi for super::Piece {
+        type Abi = <Piece as wasm_bindgen::convert::FromWasmAbi>::Abi;
+        #[inline]
+        unsafe fn from_abi(js: Self::Abi) -> Self {
+            match Piece::from_abi(js).try_into() {
+                Ok(value) => value,
+                Err(_) => wasm_bindgen::throw_str("failed to deserialize enum"),
+            }
+        }
+    }
+
+    impl wasm_bindgen::convert::OptionFromWasmAbi for super::Piece {
+        #[inline]
+        fn is_none(val: &Self::Abi) -> bool {
+            Piece::is_none(val)
+        }
+    }
+
+    impl wasm_bindgen::convert::OptionIntoWasmAbi for super::Piece {
+        #[inline]
+        fn none() -> Self::Abi {
+            Piece::none()
+        }
+    }
+
+    impl wasm_bindgen::describe::WasmDescribe for super::Piece {
+        fn describe() {
+            Piece::describe()
+        }
+    }
+
+    #[wasm_bindgen]
+    pub struct Piece {
+        tag: PieceTag,
+        content: PieceContent,
+    }
+
+    #[wasm_bindgen]
+    #[derive(Copy, Clone)]
+    pub enum PieceTag {
+        Bee,
+        Wall,
+    }
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(typescript_type = "[Bee] | undefined")]
+        type PieceContent;
+    }
+
+    impl TryFrom<Piece> for super::Piece {
+        type Error = serde_wasm_bindgen::Error;
+
+        fn try_from(value: Piece) -> Result<Self, Self::Error> {
+            match value.tag {
+                PieceTag::Bee => {
+                    let (param0,) = serde_wasm_bindgen::from_value::<(Bee,)>(value.content.obj)?;
+                    Ok(super::Piece::Bee(param0))
+                }
+                PieceTag::Wall => Ok(super::Piece::Wall),
+            }
+        }
+    }
+
+    impl TryFrom<super::Piece> for Piece {
+        type Error = serde_wasm_bindgen::Error;
+
+        fn try_from(value: super::Piece) -> Result<Self, Self::Error> {
+            let tag = match value {
+                super::Piece::Bee(_) => PieceTag::Bee,
+                super::Piece::Wall => PieceTag::Wall,
+            };
+
+            let content = match value {
+                super::Piece::Bee(param0) => PieceContent {
+                    obj: serde_wasm_bindgen::to_value(&(param0,))?,
+                },
+                super::Piece::Wall => PieceContent {
+                    obj: JsValue::undefined(),
+                },
+            };
+
+            Ok(Piece { tag, content })
         }
     }
 }
