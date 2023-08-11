@@ -101,16 +101,19 @@ impl Board {
         Board { pieces }
     }
 
-    pub fn get(&self, pos: &Pos) -> Option<&Piece> {
-        self.pieces.get(pos)
-    }
-
-    pub fn on_board(pos: Pos) -> bool {
-        (pos - Pos::default()).distance() <= Self::RADIUS as i32
-    }
-
     pub fn positions() -> impl Iterator<Item = Pos> {
         Self::POSITIONS.into_iter()
+    }
+}
+
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
+impl Board {
+    pub fn get(&self, pos: &Pos) -> Option<Piece> {
+        self.pieces.get(pos).copied()
+    }
+
+    pub fn within_bounds(pos: Pos) -> bool {
+        (pos - Pos::default()).distance() <= Self::RADIUS as i32
     }
 }
 

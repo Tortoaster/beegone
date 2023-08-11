@@ -3,14 +3,14 @@ use std::iter::Filter;
 use crate::{board::Board, pos::Pos};
 
 pub trait IteratorExt: sealed::Sealed {
-    fn on_board(self) -> Filter<Self, fn(&Pos) -> bool>
+    fn within_bounds(self) -> Filter<Self, fn(&Pos) -> bool>
     where
         Self: Sized;
 }
 
 impl<I: Iterator<Item = Pos>> IteratorExt for I {
-    fn on_board(self) -> Filter<Self, fn(&Pos) -> bool> {
-        self.filter(|pos| Board::on_board(*pos))
+    fn within_bounds(self) -> Filter<Self, fn(&Pos) -> bool> {
+        self.filter(|pos| Board::within_bounds(*pos))
     }
 }
 

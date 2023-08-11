@@ -17,13 +17,20 @@ extern "C" {
     pub type ActionArray;
 }
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
+#[cfg(feature = "wasm-bindgen")]
+#[wasm_bindgen]
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct State {
-    // TODO: cfg
     #[wasm_bindgen(getter_with_clone)]
     pub board: Board,
-    pub turn: Color,
+    turn: Color,
+}
+
+#[cfg(not(feature = "wasm-bindgen"))]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub struct State {
+    pub board: Board,
+    turn: Color,
 }
 
 #[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
@@ -74,7 +81,7 @@ impl State {
         // All bees can move to empty adjacent tiles
         let steps = from
             .adjacent()
-            .on_board()
+            .within_bounds()
             .filter(move |pos| self.board.get(pos).is_none())
             .map(move |adj| Action::Move(from, adj));
 
@@ -84,12 +91,13 @@ impl State {
             .filter(move |shift| {
                 self.board
                     .get(&(from + *shift))
+                    .as_ref()
                     .and_then(Piece::color)
                     .map(|color| color == bee.color)
                     .unwrap_or_default()
             })
             .map(move |shift| from + shift * 2)
-            .on_board()
+            .within_bounds()
             .filter(move |pos| self.board.get(pos).is_none())
             .map(move |pos| Action::Move(from, pos));
 
@@ -100,6 +108,7 @@ impl State {
             .filter(move |adj| {
                 self.board
                     .get(adj)
+                    .as_ref()
                     .map(|p| piece.can_capture(p))
                     .unwrap_or_default()
             })

@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let selected: boolean;
+	export let             selected: boolean;
 
 	$: color = selected ? '#BBB' : '#888';
 </script>
