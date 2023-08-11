@@ -16,5 +16,5 @@ pnpm install
 cargo build -p beegone --features wasm-bindgen --target wasm32-unknown-unknown --release
 wasm-bindgen --out-dir beegone_wasm target/wasm32-unknown-unknown/release/beegone.wasm
 
-npm run -w beegone_front_end dev
+pnpm -C beegone_front_end run dev
 ```

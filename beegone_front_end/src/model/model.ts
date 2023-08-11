@@ -14,10 +14,10 @@ export enum Species {
 }
 
 export type Piece =
-  | { type: "Bee", content: [Color, Species] }
-  | { type: "Wall", content: undefined }
+	| { type: 'Bee'; content: [Color, Species] }
+	| { type: 'Wall'; content: undefined };
 
 export interface Pos {
-	q: number,
-	r: number,
+	q: number;
+	r: number;
 }

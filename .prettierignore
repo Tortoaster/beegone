@@ -4,4 +4,7 @@
 node_modules
 .svelte-kit
 
-package-lock.json
+.eslintrc
+.prettierrc
+pnpm-lock.yaml
+pnpm-workspace.yaml
