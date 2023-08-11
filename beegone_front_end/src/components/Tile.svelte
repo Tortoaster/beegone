@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Pos } from '../../../beegone_wasm/beegone';
+	import type { Pos } from '../../../beegone_wasm/beegone_types';
 
 	export let pos: Pos;
 	export let scale: number;
 	export let selected: boolean;
 
-	$: x = pos.x(scale);
-	$: y = pos.y(scale);
+	$: x = (scale / 2) * ((3 / 2) * pos.q) + scale * (3 - 0.5);
+	$: y = (scale / 2) * ((Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r) + scale * (3 - 0.5);
 
 	$: color = selected ? '#BBB' : '#888';
 </script>

@@ -10,3 +10,4 @@ mod iter;
 mod piece;
 mod pos;
 mod state;
+mod wasm;

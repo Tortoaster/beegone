@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { receive, send } from '../animation/transition.js';
-	import { Color } from '../../../beegone_wasm/beegone';
-	import type { Piece } from '../../../beegone_wasm/beegone';
+	import type { Piece } from '../../../beegone_wasm/beegone_types';
 
 	export let piece: Piece;
 
-	$: color = piece.tag == 'Bee' ? (piece.content[0] == Color.Light ? '#FFF' : '#333') : '#FF0';
+	$: color = piece.type == 'bee' ? (piece.content.color == 'light' ? '#FFF' : '#000') : '#FF0';
 </script>
 
 <circle
