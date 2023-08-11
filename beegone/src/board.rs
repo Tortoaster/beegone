@@ -2,35 +2,9 @@ use std::collections::BTreeMap;
 
 use crate::{piece::Piece, pos::Pos};
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Board {
     pieces: BTreeMap<Pos, Piece>,
-}
-
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-impl Board {
-    pub fn get(&self, pos: &Pos) -> Option<Piece> {
-        self.pieces.get(pos).copied()
-    }
-
-    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) {
-        match piece {
-            None => {
-                self.pieces.remove(&pos);
-            }
-            Some(piece) => {
-                self.pieces
-                    .entry(pos)
-                    .and_modify(|p| *p = piece)
-                    .or_insert(piece);
-            }
-        }
-    }
-
-    pub fn within_bounds(pos: Pos) -> bool {
-        (pos - Self::CENTER).distance() <= Self::RADIUS as i32
-    }
 }
 
 impl Board {
@@ -125,6 +99,28 @@ impl Board {
         pieces.insert(Self::G3, Piece::Wall);
 
         Board { pieces }
+    }
+
+    pub fn within_bounds(pos: Pos) -> bool {
+        (pos - Self::CENTER).distance() <= Self::RADIUS as i32
+    }
+
+    pub fn get(&self, pos: &Pos) -> Option<Piece> {
+        self.pieces.get(pos).copied()
+    }
+
+    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) {
+        match piece {
+            None => {
+                self.pieces.remove(&pos);
+            }
+            Some(piece) => {
+                self.pieces
+                    .entry(pos)
+                    .and_modify(|p| *p = piece)
+                    .or_insert(piece);
+            }
+        }
     }
 
     pub fn positions() -> impl Iterator<Item = Pos> {

@@ -1,64 +1,33 @@
-#[cfg(feature = "wasm-bindgen")]
-use wasm_bindgen::prelude::*;
-
 use crate::{
     action::{Action, Actions, SpecialActions},
     board::Board,
-    error::Result,
     iter::IteratorExt,
     piece::{Color, Piece},
     pos::{Pos, Shift},
 };
 
-#[cfg(feature = "wasm-bindgen")]
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(typescript_type = "Array<Action>")]
-    pub type ActionArray;
-}
-
-#[cfg(feature = "wasm-bindgen")]
-#[wasm_bindgen]
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct State {
-    #[wasm_bindgen(getter_with_clone)]
-    pub board: Board,
-    pub turn: Color,
+    board: Board,
+    turn: Color,
 }
 
-#[cfg(not(feature = "wasm-bindgen"))]
-#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct State {
-    pub board: Board,
-    pub turn: Color,
-}
-
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
 impl State {
-    #[cfg_attr(feature = "wasm-bindgen", wasm_bindgen(constructor))]
     pub fn new() -> Self {
         State::default()
     }
 
-    #[cfg(feature = "wasm-bindgen")]
-    pub fn all_actions_from(&self, from: Pos) -> ActionArray {
-        let array: js_sys::Array = self
-            .actions_from(from)
-            .map(|action| serde_wasm_bindgen::to_value(&action).unwrap())
-            .collect();
-        array.unchecked_into::<ActionArray>()
+    pub fn board(&self) -> &Board {
+        &self.board
     }
 
-    pub fn perform(&mut self, _action: Action) -> Result<()> {
-        todo!()
+    pub fn turn(&self) -> Color {
+        self.turn
     }
-
-    pub fn end_turn(&mut self) {
+    pub fn pass_turn(&mut self) {
         self.turn = !self.turn;
     }
-}
 
-impl State {
     pub fn actions<'a>(&'a self) -> impl Iterator<Item = Action> + 'a {
         Board::positions().flat_map(|pos| self.actions_from(pos))
     }
@@ -74,7 +43,7 @@ impl State {
             Piece::Wall => return Actions::None,
         };
 
-        if bee.color != self.turn {
+        if bee.color() != self.turn {
             return Actions::None;
         }
 
@@ -93,7 +62,7 @@ impl State {
                     .get(&(from + *shift))
                     .as_ref()
                     .and_then(Piece::color)
-                    .map(|color| color == bee.color)
+                    .map(|color| color == bee.color())
                     .unwrap_or_default()
             })
             .map(move |shift| from + shift * 2)

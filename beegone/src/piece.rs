@@ -1,7 +1,5 @@
 use std::ops::Not;
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Color {
     #[default]
@@ -20,8 +18,6 @@ impl Not for Color {
     }
 }
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Species {
     Drone,
@@ -33,23 +29,27 @@ pub enum Species {
     Queen,
 }
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Bee {
-    pub color: Color,
-    pub species: Species,
+    color: Color,
+    species: Species,
 }
 
 impl Bee {
     pub const fn new(color: Color, species: Species) -> Self {
         Bee { color, species }
     }
+
+    pub fn color(&self) -> Color {
+        self.color
+    }
+
+    pub fn species(&self) -> Species {
+        self.species
+    }
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(tag = "tag", content = "content"))]
 pub enum Piece {
     Bee(Bee),
     Wall,
@@ -86,66 +86,6 @@ impl Piece {
         match self {
             Piece::Bee(bee) => Some(bee.color),
             Piece::Wall => None,
-        }
-    }
-}
-
-// Boilerplate to allow non-C-style enum `Piece`
-#[cfg(feature = "wasm-bindgen")]
-mod wasm {
-    use wasm_bindgen::{
-        convert::{FromWasmAbi, IntoWasmAbi, OptionFromWasmAbi, OptionIntoWasmAbi},
-        describe::WasmDescribe,
-        prelude::*,
-    };
-
-    use crate::Piece;
-
-    #[wasm_bindgen(typescript_custom_section)]
-    const PIECE: &str = r"export type Piece =
-    | { tag: 'Bee'; content: [Color, Species] }
-    | { tag: 'Wall'; content: undefined };";
-
-    impl FromWasmAbi for Piece {
-        type Abi = <JsValue as FromWasmAbi>::Abi;
-
-        #[inline]
-        unsafe fn from_abi(js: Self::Abi) -> Self {
-            match serde_wasm_bindgen::from_value(JsValue::from_abi(js)) {
-                Ok(value) => value,
-                Err(_) => wasm_bindgen::throw_str("failed to deserialize enum"),
-            }
-        }
-    }
-
-    impl IntoWasmAbi for Piece {
-        type Abi = <JsValue as IntoWasmAbi>::Abi;
-
-        #[inline]
-        fn into_abi(self) -> Self::Abi {
-            match serde_wasm_bindgen::to_value(&self) {
-                Ok(value) => value.into_abi(),
-                Err(_) => wasm_bindgen::throw_str("failed to serialize enum"),
-            }
-        }
-    }
-
-    impl OptionFromWasmAbi for Piece {
-        fn is_none(abi: &Self::Abi) -> bool {
-            unsafe { JsValue::from_abi(*abi).is_null() }
-        }
-    }
-
-    impl OptionIntoWasmAbi for Piece {
-        #[inline]
-        fn none() -> Self::Abi {
-            JsValue::NULL.into_abi()
-        }
-    }
-
-    impl WasmDescribe for Piece {
-        fn describe() {
-            JsValue::describe()
         }
     }
 }

@@ -1,9 +1,5 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use crate::Board;
-
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Pos {
     pub q: i32,
@@ -16,27 +12,17 @@ impl Pos {
     }
 }
 
-#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen::prelude::wasm_bindgen)]
 impl Pos {
-    #[cfg_attr(
-        feature = "wasm-bindgen",
-        wasm_bindgen::prelude::wasm_bindgen(constructor)
-    )]
-    pub fn new(q: i32, r: i32) -> Self {
-        Pos { q, r }
-    }
-
     pub fn s(&self) -> i32 {
         -self.q - self.r
     }
 
-    pub fn x(&self, scale: f32) -> f32 {
-        (scale / 2.0) * (1.5 * self.q as f32) + scale * (Board::RADIUS as f32 - 0.5)
+    pub fn x(&self) -> f32 {
+        1.5 * self.q as f32
     }
 
-    pub fn y(&self, scale: f32) -> f32 {
-        (scale / 2.0) * ((3f32.sqrt() / 2.0) * self.q as f32 + 3f32.sqrt() * self.r as f32)
-            + scale * (Board::RADIUS as f32 - 0.5)
+    pub fn y(&self) -> f32 {
+        (3f32.sqrt() / 2.0) * self.q as f32 + 3f32.sqrt() * self.r as f32
     }
 }
 
