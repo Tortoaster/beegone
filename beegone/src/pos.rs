@@ -1,6 +1,12 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
+#[typeshare]
+#[derive(
+    Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
+)]
 pub struct Pos {
     pub q: i32,
     pub r: i32,

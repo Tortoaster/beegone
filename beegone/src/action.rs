@@ -1,16 +1,47 @@
 use std::iter;
 
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
 use crate::{piece::Piece, pos::Pos};
 
-#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(tag = "tag", content = "content"))]
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[serde(tag = "type", content = "content")]
 pub enum Action {
-    Move(Pos, Pos),
-    Spawn(Pos, Piece),
+    Move(MoveAction),
+    Spawn(SpawnAction),
 }
 
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+pub struct MoveAction {
+    from: Pos,
+    to: Pos,
+}
+
+impl MoveAction {
+    pub fn new(from: Pos, to: Pos) -> Self {
+        MoveAction { from, to }
+    }
+}
+
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+pub struct SpawnAction {
+    on: Pos,
+    spawn: Piece,
+}
+
+impl SpawnAction {
+    pub fn new(on: Pos, spawn: Piece) -> Self {
+        SpawnAction { on, spawn }
+    }
+}
+
+#[derive(Default)]
 pub enum Actions<'a> {
+    #[default]
     None,
     Some {
         stage: usize,
@@ -72,16 +103,15 @@ impl Iterator for Actions<'_> {
                     }
                     Some(action) => Some(action),
                 },
-                _ => match steps.next() {
-                    None => None,
-                    Some(action) => Some(action),
-                },
+                _ => steps.next(),
             },
         }
     }
 }
 
+#[derive(Clone, Debug, Default)]
 pub enum SpecialActions {
+    #[default]
     None,
     Nurse(iter::Empty<Action>),
     Explorer(iter::Empty<Action>),

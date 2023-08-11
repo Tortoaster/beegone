@@ -1,6 +1,13 @@
 use std::ops::Not;
 
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
+#[typeshare]
+#[derive(
+    Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
+)]
+#[serde(rename_all = "camelCase")]
 pub enum Color {
     #[default]
     Light,
@@ -18,7 +25,9 @@ impl Not for Color {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Species {
     Drone,
     Worker,
@@ -29,7 +38,8 @@ pub enum Species {
     Queen,
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub struct Bee {
     color: Color,
     species: Species,
@@ -49,7 +59,9 @@ impl Bee {
     }
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[typeshare]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum Piece {
     Bee(Bee),
     Wall,

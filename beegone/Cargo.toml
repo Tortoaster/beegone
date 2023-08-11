@@ -9,3 +9,5 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+serde = { version = "1.0.183", features = ["derive"] }
+typeshare = "1.0.1"

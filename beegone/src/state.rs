@@ -1,12 +1,16 @@
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
 use crate::{
-    action::{Action, Actions, SpecialActions},
+    action::{Action, Actions, MoveAction, SpecialActions},
     board::Board,
     iter::IteratorExt,
     piece::{Color, Piece},
     pos::{Pos, Shift},
 };
 
-#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[typeshare]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub struct State {
     board: Board,
     turn: Color,
@@ -52,7 +56,7 @@ impl State {
             .adjacent()
             .within_bounds()
             .filter(move |pos| self.board.get(pos).is_none())
-            .map(move |adj| Action::Move(from, adj));
+            .map(move |adj| Action::Move(MoveAction::new(from, adj)));
 
         // All bees can jump over adjacent bees of the same color, as long as the tile
         // they land on is empty
@@ -68,7 +72,7 @@ impl State {
             .map(move |shift| from + shift * 2)
             .within_bounds()
             .filter(move |pos| self.board.get(pos).is_none())
-            .map(move |pos| Action::Move(from, pos));
+            .map(move |pos| Action::Move(MoveAction::new(from, pos)));
 
         // Most bees can capture weaker adjacent pieces of the opposite color, and
         // builders can capture walls
@@ -81,7 +85,7 @@ impl State {
                     .map(|p| piece.can_capture(p))
                     .unwrap_or_default()
             })
-            .map(move |adj| Action::Move(from, adj));
+            .map(move |adj| Action::Move(MoveAction::new(from, adj)));
 
         let specials = SpecialActions::None;
 

@@ -1,9 +1,14 @@
 use std::collections::BTreeMap;
 
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
 use crate::{piece::Piece, pos::Pos};
 
-#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[typeshare]
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub struct Board {
+    #[typeshare(skip)]
     pieces: BTreeMap<Pos, Piece>,
 }
 
