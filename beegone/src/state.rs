@@ -28,9 +28,6 @@ impl State {
     pub fn turn(&self) -> Color {
         self.turn
     }
-    pub fn pass_turn(&mut self) {
-        self.turn = !self.turn;
-    }
 
     pub fn actions<'a>(&'a self) -> impl Iterator<Item = Action> + 'a {
         Board::positions().flat_map(|pos| self.actions_from(pos))

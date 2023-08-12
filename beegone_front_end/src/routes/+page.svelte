@@ -1,13 +1,11 @@
 <script lang="ts">
 	import PieceComponent from '../components/PieceComponent.svelte';
 	import Tile from '../components/Tile.svelte';
-	import { board_get, state_new } from '../../../beegone_wasm/beegone';
-	import type { Pos, State } from '../../../beegone_wasm/beegone_types';
+	import { state } from '../stores/state';
+	import type { Pos } from '../../../beegone_wasm/beegone_types';
 
 	const BOARD_RADIUS = 3;
 	const TILE_SIZE = 50;
-
-	let state: State = state_new();
 
 	let selected: Pos | null = null;
 	const endTurn = () => {
@@ -16,26 +14,26 @@
 
 	function select(pos: Pos) {
 		if (selected == null) {
-			let piece = board_get(state.board, pos);
-			if (piece?.type === 'bee' && piece.content.color === state.turn) {
+			let piece = state.get(pos);
+			if (piece?.type === 'bee' && piece.content.color === state.turn()) {
 				selected = pos;
 			}
 		} else if (selected.q === pos.q && selected.r === pos.r) {
 			selected = null;
 		} else {
-			const destination = board_get(state.board, pos);
+			const destination = state.get(pos);
 			if (destination == null) {
 				// Move
-				let piece = board_get(state.board, selected)!;
+				let piece = state.get(selected)!;
 				// state.board.set(selected, null);
 				// state.board.set(pos, piece);
 				endTurn();
 			} else {
 				switch (destination.type) {
 					case 'bee':
-						if (destination.content.color != state.turn) {
+						if (destination.content.color !== state.turn()) {
 							// Capture
-							let piece = board_get(state.board, selected)!;
+							let piece = state.get(selected)!;
 							// state.board.set(selected, null);
 							// state.board.set(pos, piece);
 							endTurn();
@@ -45,7 +43,7 @@
 						break;
 					case 'wall': {
 						// Break wall
-						let piece = board_get(state.board, selected)!;
+						let piece = state.get(selected)!;
 						// state.board.set(selected, null);
 						// state.board.set(pos, piece);
 						endTurn();
@@ -73,8 +71,8 @@
 			scale={TILE_SIZE}
 			selected={selected?.q === pos.q && selected.r === pos.r}
 		>
-			{#if board_get(state.board, pos) != null}
-				<PieceComponent on:click={() => select(pos)} piece={board_get(state.board, pos)} />
+			{#if state.get(pos) != null}
+				<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
 			{/if}
 		</Tile>
 	{/each}

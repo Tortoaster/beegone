@@ -7,7 +7,7 @@ use crate::{piece::Piece, pos::Pos};
 
 #[typeshare]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
-#[serde(tag = "type", content = "content")]
+#[serde(rename_all = "camelCase", tag = "type", content = "content")]
 pub enum Action {
     Move(MoveAction),
     Spawn(SpawnAction),

@@ -22,7 +22,7 @@ extern "C" {
     pub type JsState;
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "stateNew")]
 pub fn state_new() -> Result<JsState, JsValue> {
     let state = State::new();
 
@@ -33,7 +33,7 @@ pub fn state_new() -> Result<JsState, JsValue> {
     Ok(js_state)
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "stateActionsFrom")]
 pub fn state_actions_from(state: JsState, pos: JsPos) -> Result<Array, JsValue> {
     let state: State = from_value(state.obj)?;
     let pos: Pos = from_value(pos.obj)?;
@@ -48,7 +48,7 @@ pub fn state_actions_from(state: JsState, pos: JsPos) -> Result<Array, JsValue> 
     Ok(array)
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "boardGet")]
 pub fn board_get(board: JsBoard, pos: JsPos) -> Result<Option<JsPiece>, JsValue> {
     let board: Board = from_value(board.obj)?;
     let pos: Pos = from_value(pos.obj)?;
