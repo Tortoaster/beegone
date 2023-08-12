@@ -151,4 +151,23 @@ impl State {
 
         Actions::new(steps, leaps, captures, specials)
     }
+
+    pub fn perform(&mut self, action: Action) -> Result<(), &'static str> {
+        match action {
+            Action::Move(move_action) => {
+                self.actions_from(move_action.from())
+                    .find(|a| *a == action)
+                    .ok_or("illegal move")?;
+
+                let piece = self.board.get(&move_action.from()).unwrap();
+                self.board.set(move_action.from(), None);
+                self.board.set(move_action.to(), Some(piece));
+            }
+            Action::Spawn(_) => todo!(),
+        }
+
+        self.turn = !self.turn;
+
+        Ok(())
+    }
 }

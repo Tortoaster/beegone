@@ -24,6 +24,14 @@ impl MoveAction {
     pub fn new(from: Pos, to: Pos) -> Self {
         MoveAction { from, to }
     }
+    
+    pub fn from(&self) -> Pos {
+        self.from
+    }
+    
+    pub fn to(&self) -> Pos {
+        self.to
+    }
 }
 
 #[typeshare]
