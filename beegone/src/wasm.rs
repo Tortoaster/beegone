@@ -5,10 +5,13 @@ use wasm_bindgen::{prelude::wasm_bindgen, JsCast, JsValue};
 use crate::{Board, Pos, State};
 
 #[wasm_bindgen(typescript_custom_section)]
-const IMPORTS: &str = "import { Board, Piece, Pos, State } from './beegone_types';";
+const IMPORTS: &str = "import { Action, Board, Piece, Pos, State } from './beegone_types';";
 
 #[wasm_bindgen]
 extern "C" {
+    #[wasm_bindgen(typescript_type = "Action[]")]
+    pub type JsActionArray;
+
     #[wasm_bindgen(typescript_type = "Board")]
     pub type JsBoard;
 
@@ -34,13 +37,13 @@ pub fn state_new() -> Result<JsState, JsValue> {
 }
 
 #[wasm_bindgen(js_name = "stateActionsFrom")]
-pub fn state_actions_from(state: JsState, pos: JsPos) -> Result<Array, JsValue> {
+pub fn state_actions_from(state: JsState, pos: JsPos) -> Result<JsActionArray, JsValue> {
     let state: State = from_value(state.obj)?;
     let pos: Pos = from_value(pos.obj)?;
 
     let actions = state.actions_from(pos);
 
-    let array: Array = actions
+    let array: JsActionArray = actions
         .map(|action| to_value(&action))
         .collect::<Result<Array, _>>()?
         .unchecked_into();

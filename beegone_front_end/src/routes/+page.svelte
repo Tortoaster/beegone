@@ -4,13 +4,11 @@
 	import { state } from '../stores/state';
 	import type { Pos } from '../../../beegone_wasm/beegone_types';
 
-	const BOARD_RADIUS = 3;
-	const TILE_SIZE = 50;
-
 	let selected: Pos | null = null;
-	const endTurn = () => {
-		selected = null;
-	};
+
+	$: moves = state
+		.actionsFrom(selected ?? { q: -10, r: -10 })
+		.flatMap((action) => (action.type === 'move' ? [action.content.to] : []));
 
 	function select(pos: Pos) {
 		if (selected == null) {
@@ -27,7 +25,7 @@
 				let piece = state.get(selected)!;
 				// state.board.set(selected, null);
 				// state.board.set(pos, piece);
-				endTurn();
+				selected = null;
 			} else {
 				switch (destination.type) {
 					case 'bee':
@@ -36,7 +34,7 @@
 							let piece = state.get(selected)!;
 							// state.board.set(selected, null);
 							// state.board.set(pos, piece);
-							endTurn();
+							selected = null;
 						} else {
 							selected = pos;
 						}
@@ -46,7 +44,7 @@
 						let piece = state.get(selected)!;
 						// state.board.set(selected, null);
 						// state.board.set(pos, piece);
-						endTurn();
+						selected = null;
 						break;
 					}
 				}
@@ -54,6 +52,7 @@
 		}
 	}
 
+	const BOARD_RADIUS = 3;
 	const range = (start: number, stop: number, step = 1) =>
 		Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 	const positions: Pos[] = range(-BOARD_RADIUS, BOARD_RADIUS)
@@ -68,8 +67,9 @@
 		<Tile
 			on:click={() => select(pos)}
 			{pos}
-			scale={TILE_SIZE}
+			scale={50}
 			selected={selected?.q === pos.q && selected.r === pos.r}
+			highlight={moves.find((p) => p.q === pos.q && p.r === pos.r) !== undefined}
 		>
 			{#if state.get(pos) != null}
 				<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
