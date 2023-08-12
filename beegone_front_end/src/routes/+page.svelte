@@ -56,26 +56,28 @@
 			}
 		}
 	}
+
+	const viewBox = 360;
+	const tileSize = viewBox / 6;
+	const x = (pos: Pos) => (tileSize / 2) * ((3 / 2) * pos.q - 1);
+	const y = (pos: Pos) => (tileSize / 2) * ((Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r - 1);
 </script>
 
 <svg
 	class="bg-amber-800"
-	viewBox="0 0 300 300"
+	viewBox="{-viewBox / 2} {-viewBox / 2} {viewBox} {viewBox}"
 	xmlns="http://www.w3.org/2000/svg"
 	width="100vw"
 	height="100vh"
 >
 	{#each state.positions() as pos}
-		<Tile
-			on:click={() => select(pos)}
-			{pos}
-			scale={50}
-			selected={selected?.q === pos.q && selected.r === pos.r}
-		>
-			{#if state.get(pos) != null}
-				<PieceComponent piece={state.get(pos)} />
-			{/if}
-			<ActionButtonGroup actions={actionsOn(pos)} />
-		</Tile>
+		<svg x={x(pos) * 0.9} y={y(pos) * 0.9} width={tileSize} height={tileSize}>
+			<Tile height={-0.05} sideClass="fill-amber-600" topClass="fill-amber-300">
+				{#if state.get(pos) != null}
+					<PieceComponent piece={state.get(pos)} />
+				{/if}
+				<ActionButtonGroup actions={actionsOn(pos)} />
+			</Tile>
+		</svg>
 	{/each}
 </svg>

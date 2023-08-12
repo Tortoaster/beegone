@@ -1,17 +1,28 @@
 <script lang="ts">
 	import { polygon } from '../utils/polygon';
-	import type { Pos } from '../../../beegone_wasm/beegone_types';
 
-	export let pos: Pos;
-	export let scale: number;
-
-	$: x = (scale / 2) * ((3 / 2) * pos.q) + scale * (3 - 0.5);
-	$: y = (scale / 2) * ((Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r) + scale * (3 - 0.5);
+	export let sideClass = 'fill-transparent';
+	export let topClass = 'fill-transparent';
+	export let height = 0.15;
 
 	const viewBox = 360;
+	const tileSize = 0.8 * viewBox;
+	$: tileHeight = height * viewBox;
+	const cornerRadius = 0.1 * viewBox;
+	const margin = cornerRadius - Math.cos(Math.PI / 6) * cornerRadius;
 </script>
 
-<svg viewBox="0 0 {viewBox} {viewBox}" {x} {y} width={scale} height={scale}>
-	<path class="fill-amber-300" d={polygon(viewBox, 0.45 * viewBox, 0.1 * viewBox)} />
-	<slot />
+<svg viewBox="0 0 {viewBox} {viewBox}">
+	<path class={sideClass} d={polygon(viewBox, tileSize / 2, cornerRadius)} />
+	<rect
+		class={sideClass}
+		x={(viewBox - tileSize) / 2 + margin}
+		y={viewBox / 2 - Math.max(0, tileHeight)}
+		width={tileSize - margin * 2}
+		height={Math.abs(tileHeight)}
+	/>
+	<svg viewBox="0 0 {viewBox} {viewBox}" y={-tileHeight}>
+		<path class={topClass} d={polygon(viewBox, tileSize / 2, cornerRadius)} />
+		<slot />
+	</svg>
 </svg>
