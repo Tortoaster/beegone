@@ -2,10 +2,9 @@
 	import PieceComponent from '../components/PieceComponent.svelte';
 	import Tile from '../components/Tile.svelte';
 	import { state } from '../stores/state';
-	import type { Pos, State } from '../../../beegone_wasm/beegone_types';
+	import type { Pos } from '../../../beegone_wasm/beegone_types';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
 	import LightSwitch from '../components/LightSwitch.svelte';
-	import { onDestroy } from 'svelte';
 
 	let selected: Pos | null = null;
 
@@ -25,7 +24,7 @@
 			selected = null;
 		} else {
 			let piece = state.get(pos);
-			if (piece?.type === 'bee' && piece.content.color === state.turn()) {
+			if (piece?.kind.type === 'bee' && piece.kind.content.color === state.turn()) {
 				selected = pos;
 			}
 		}

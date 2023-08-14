@@ -3,7 +3,10 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
-use crate::{piece::Piece, pos::Pos};
+use crate::{
+    piece::{Piece, PieceKind},
+    pos::Pos,
+};
 
 #[typeshare]
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
@@ -81,27 +84,27 @@ impl Board {
     pub fn new() -> Self {
         let mut pieces = BTreeMap::new();
 
-        pieces.insert(Self::D2, Piece::DARK_QUEEN);
-        pieces.insert(Self::D1, Piece::DARK_DRONE);
-        pieces.insert(Self::B3, Piece::DARK_NURSE);
-        pieces.insert(Self::F1, Piece::DARK_NURSE);
+        pieces.insert(Self::D2, Piece::new(Piece::DARK_QUEEN));
+        pieces.insert(Self::D1, Piece::new(Piece::DARK_DRONE));
+        pieces.insert(Self::B3, Piece::new(Piece::DARK_NURSE));
+        pieces.insert(Self::F1, Piece::new(Piece::DARK_NURSE));
 
-        pieces.insert(Self::D6, Piece::LIGHT_QUEEN);
-        pieces.insert(Self::D7, Piece::LIGHT_DRONE);
-        pieces.insert(Self::B7, Piece::LIGHT_NURSE);
-        pieces.insert(Self::F5, Piece::LIGHT_NURSE);
+        pieces.insert(Self::D6, Piece::new(Piece::LIGHT_QUEEN));
+        pieces.insert(Self::D7, Piece::new(Piece::LIGHT_DRONE));
+        pieces.insert(Self::B7, Piece::new(Piece::LIGHT_NURSE));
+        pieces.insert(Self::F5, Piece::new(Piece::LIGHT_NURSE));
 
-        pieces.insert(Self::A5, Piece::Wall);
-        pieces.insert(Self::A6, Piece::Wall);
-        pieces.insert(Self::B5, Piece::Wall);
-        pieces.insert(Self::C4, Piece::Wall);
-        pieces.insert(Self::C5, Piece::Wall);
-        pieces.insert(Self::D4, Piece::Wall);
-        pieces.insert(Self::E3, Piece::Wall);
-        pieces.insert(Self::E4, Piece::Wall);
-        pieces.insert(Self::F3, Piece::Wall);
-        pieces.insert(Self::G2, Piece::Wall);
-        pieces.insert(Self::G3, Piece::Wall);
+        pieces.insert(Self::A5, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::A6, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::B5, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::C4, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::C5, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::D4, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::E3, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::E4, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::F3, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::G2, Piece::new(PieceKind::Wall));
+        pieces.insert(Self::G3, Piece::new(PieceKind::Wall));
 
         Board { pieces }
     }

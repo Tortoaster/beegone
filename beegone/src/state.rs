@@ -5,7 +5,7 @@ use crate::{
     action::{Action, Actions, MoveAction, SpecialActions},
     board::Board,
     iter::IteratorExt,
-    piece::{Color, Piece},
+    piece::{Color, PieceKind},
     pos::{Pos, Shift},
 };
 
@@ -39,9 +39,9 @@ impl State {
             Some(piece) => piece,
         };
 
-        let bee = match piece {
-            Piece::Bee(bee) => bee,
-            Piece::Wall => return Actions::None,
+        let bee = match piece.kind() {
+            PieceKind::Bee(bee) => bee,
+            PieceKind::Wall => return Actions::None,
         };
 
         if bee.color() != self.turn {
@@ -61,8 +61,7 @@ impl State {
             .filter(move |shift| {
                 self.board
                     .get(&(from + *shift))
-                    .as_ref()
-                    .and_then(Piece::color)
+                    .and_then(|piece| piece.kind().color())
                     .map(|color| color == bee.color())
                     .unwrap_or_default()
             })
@@ -79,7 +78,7 @@ impl State {
                 self.board
                     .get(adj)
                     .as_ref()
-                    .map(|p| piece.can_capture(p))
+                    .map(|p| piece.kind().can_capture(&p.kind()))
                     .unwrap_or_default()
             })
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
