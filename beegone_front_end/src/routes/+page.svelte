@@ -69,7 +69,7 @@
 		<LightSwitch />
 	</div>
 	<svg
-		class="bg-amber-800 dark:bg-slate-800"
+		class="bg-amber-500 dark:bg-slate-800"
 		viewBox="{-viewBox / 2} {-viewBox / 2} {viewBox} {viewBox}"
 		xmlns="http://www.w3.org/2000/svg"
 		width="100vw"
@@ -80,7 +80,7 @@
 				<Tile
 					height={-0.05}
 					sideClass="fill-amber-600 dark:fill-slate-500"
-					topClass="fill-amber-300 dark:fill-slate-400"
+					topClass="fill-amber-700 dark:fill-slate-400"
 				>
 					{#if state.get(pos) != null}
 						<PieceComponent piece={state.get(pos)} />
