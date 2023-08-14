@@ -56,8 +56,8 @@
 			<svg x={x(pos) * 0.9} y={y(pos) * 0.92} width={tileSize} height={tileSize}>
 				<Tile
 					height={-0.05}
-					sideClass="fill-amber-600 dark:fill-slate-500"
-					topClass="fill-amber-700 dark:fill-slate-400"
+					sideClass="fill-amber-600 dark:fill-slate-600"
+					topClass="fill-amber-700 dark:fill-slate-500"
 				>
 					{#if state.get(pos) != null}
 						<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
