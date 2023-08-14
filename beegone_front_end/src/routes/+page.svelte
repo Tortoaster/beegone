@@ -4,6 +4,7 @@
 	import { state } from '../stores/state';
 	import type { Action, Pos } from '../../../beegone_wasm/beegone_types';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
+	import LightSwitch from '../components/LightSwitch.svelte';
 
 	let selected: Pos | null = null;
 
@@ -63,21 +64,30 @@
 	const y = (pos: Pos) => (tileSize / 2) * ((Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r - 1);
 </script>
 
-<svg
-	class="bg-amber-800"
-	viewBox="{-viewBox / 2} {-viewBox / 2} {viewBox} {viewBox}"
-	xmlns="http://www.w3.org/2000/svg"
-	width="100vw"
-	height="100vh"
->
-	{#each state.positions() as pos}
-		<svg x={x(pos) * 0.9} y={y(pos) * 0.9} width={tileSize} height={tileSize}>
-			<Tile height={-0.05} sideClass="fill-amber-600" topClass="fill-amber-300">
-				{#if state.get(pos) != null}
-					<PieceComponent piece={state.get(pos)} />
-				{/if}
-				<ActionButtonGroup actions={actionsOn(pos)} />
-			</Tile>
-		</svg>
-	{/each}
-</svg>
+<div>
+	<div class="fixed top-0 right-0 m-4">
+		<LightSwitch />
+	</div>
+	<svg
+		class="bg-amber-800 dark:bg-slate-800"
+		viewBox="{-viewBox / 2} {-viewBox / 2} {viewBox} {viewBox}"
+		xmlns="http://www.w3.org/2000/svg"
+		width="100vw"
+		height="100vh"
+	>
+		{#each state.positions() as pos}
+			<svg x={x(pos) * 0.9} y={y(pos) * 0.9} width={tileSize} height={tileSize}>
+				<Tile
+					height={-0.05}
+					sideClass="fill-amber-600 dark:fill-slate-500"
+					topClass="fill-amber-300 dark:fill-slate-400"
+				>
+					{#if state.get(pos) != null}
+						<PieceComponent piece={state.get(pos)} />
+					{/if}
+					<ActionButtonGroup actions={actionsOn(pos)} />
+				</Tile>
+			</svg>
+		{/each}
+	</svg>
+</div>
