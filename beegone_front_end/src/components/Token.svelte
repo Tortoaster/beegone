@@ -9,7 +9,7 @@
 	$: tokenHeight = height * viewBox;
 </script>
 
-<svg viewBox="0 0 {viewBox} {viewBox}">
+<svg on:click viewBox="0 0 {viewBox} {viewBox}">
 	<circle class={sideClass} cx={viewBox / 2} cy={viewBox / 2} r={tokenSize / 2} />
 	<rect
 		class={sideClass}

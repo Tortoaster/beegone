@@ -15,17 +15,23 @@
 {:else if piece.content.color === 'light'}
 	<!-- in:receive={{ key: piece }} -->
 	<!-- out:send={{ key: piece }} -->
-	<Token
-		size={0.45}
-		height={0.1}
-		sideClass="fill-amber-400 dark:fill-slate-300"
-		topClass="fill-amber-300 dark:fill-slate-100"
-	/>
+	<svg class="cursor-pointer">
+		<Token
+			on:click
+			size={0.45}
+			height={0.1}
+			sideClass="fill-amber-400 dark:fill-slate-300"
+			topClass="fill-amber-300 dark:fill-slate-100"
+		/>
+	</svg>
 {:else}
-	<Token
-		size={0.45}
-		height={0.1}
-		sideClass="fill-amber-900 dark:fill-slate-900"
-		topClass="fill-amber-800  dark:fill-slate-800"
-	/>
+	<svg class="cursor-pointer">
+		<Token
+			on:click
+			size={0.45}
+			height={0.1}
+			sideClass="fill-amber-900 dark:fill-slate-900"
+			topClass="fill-amber-800  dark:fill-slate-800"
+		/>
+	</svg>
 {/if}

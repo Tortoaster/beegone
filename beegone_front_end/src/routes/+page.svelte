@@ -2,9 +2,10 @@
 	import PieceComponent from '../components/PieceComponent.svelte';
 	import Tile from '../components/Tile.svelte';
 	import { state } from '../stores/state';
-	import type { Action, Pos } from '../../../beegone_wasm/beegone_types';
+	import type { Pos, State } from '../../../beegone_wasm/beegone_types';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
 	import LightSwitch from '../components/LightSwitch.svelte';
+	import { onDestroy } from 'svelte';
 
 	let selected: Pos | null = null;
 
@@ -20,42 +21,19 @@
 		);
 
 	function select(pos: Pos) {
-		if (selected == null) {
+		if (selected?.q === pos.q && selected.r === pos.r) {
+			selected = null;
+		} else {
 			let piece = state.get(pos);
 			if (piece?.type === 'bee' && piece.content.color === state.turn()) {
 				selected = pos;
 			}
-		} else if (selected.q === pos.q && selected.r === pos.r) {
-			selected = null;
-		} else {
-			const destination = state.get(pos);
-			if (destination == null) {
-				// Move
-				let move: Action = { type: 'move', content: { from: selected, to: pos } };
-				state.perform(move);
-				selected = null;
-			} else {
-				switch (destination.type) {
-					case 'bee':
-						if (destination.content.color !== state.turn()) {
-							// Capture
-							let move: Action = { type: 'move', content: { from: selected, to: pos } };
-							state.perform(move);
-							selected = null;
-						} else {
-							selected = pos;
-						}
-						break;
-					case 'wall': {
-						// Break wall
-						let move: Action = { type: 'move', content: { from: selected, to: pos } };
-						state.perform(move);
-						selected = null;
-						break;
-					}
-				}
-			}
 		}
+	}
+
+	function performAction(event: CustomEvent) {
+		state.perform(event.detail.action);
+		selected = null;
 	}
 
 	const viewBox = 360;
@@ -75,17 +53,17 @@
 		width="100vw"
 		height="100vh"
 	>
-		{#each state.positions() as pos}
-			<svg x={x(pos) * 0.9} y={y(pos) * 0.9} width={tileSize} height={tileSize}>
+		{#each $state.positions() as pos}
+			<svg x={x(pos) * 0.9} y={y(pos) * 0.92} width={tileSize} height={tileSize}>
 				<Tile
 					height={-0.05}
 					sideClass="fill-amber-600 dark:fill-slate-500"
 					topClass="fill-amber-700 dark:fill-slate-400"
 				>
 					{#if state.get(pos) != null}
-						<PieceComponent piece={state.get(pos)} />
+						<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
 					{/if}
-					<ActionButtonGroup actions={actionsOn(pos)} />
+					<ActionButtonGroup on:action={performAction} actions={actionsOn(pos)} />
 				</Tile>
 			</svg>
 		{/each}

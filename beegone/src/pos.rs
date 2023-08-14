@@ -112,7 +112,7 @@ impl Shift {
     }
 
     pub fn distance(&self) -> i32 {
-        self.dq.abs() + self.dr.abs() + self.ds().abs()
+        (self.dq.abs() + self.dr.abs() + self.ds().abs()) / 2
     }
 }
 
