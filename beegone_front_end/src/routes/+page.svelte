@@ -59,6 +59,7 @@
 					sideClass="fill-amber-600 dark:fill-slate-600"
 					topClass="fill-amber-700 dark:fill-slate-500"
 				>
+					<Tile size={0.6} height={0} topClass="fill-amber-800 dark:fill-slate-600" />
 					{#if state.get(pos) != null}
 						<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
 					{/if}

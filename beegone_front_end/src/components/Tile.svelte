@@ -3,10 +3,11 @@
 
 	export let sideClass = 'fill-transparent';
 	export let topClass = 'fill-transparent';
+	export let size = 0.8;
 	export let height = 0.15;
 
 	const viewBox = 360;
-	const tileSize = 0.8 * viewBox;
+	const tileSize = size * viewBox;
 	$: tileHeight = height * viewBox;
 	const cornerRadius = 0.1 * viewBox;
 	const margin = cornerRadius - Math.cos(Math.PI / 6) * cornerRadius;

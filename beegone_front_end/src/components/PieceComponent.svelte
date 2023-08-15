@@ -13,7 +13,9 @@
 			height={0.15}
 			sideClass="fill-amber-600 dark:fill-slate-600"
 			topClass="fill-amber-400 dark:fill-slate-400"
-		/>
+		>
+			<Tile size={0.6} height={0} topClass="fill-amber-300 dark:fill-slate-300" />
+		</Tile>
 	{:else if piece.kind.content.color === 'light'}
 		<Token
 			on:click
