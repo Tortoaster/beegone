@@ -1,20 +1,9 @@
-import { crossfade } from 'svelte/transition';
-import { quintOut } from 'svelte/easing';
+import { crossfade, fly } from 'svelte/transition';
 
 export const [send, receive] = crossfade({
-	duration: (d) => Math.sqrt(d * 200),
+	duration: (d) => d * 3,
 
-	fallback(node, params) {
-		const style = getComputedStyle(node);
-		const transform = style.transform === 'none' ? '' : style.transform;
-
-		return {
-			duration: 600,
-			easing: quintOut,
-			css: (t) => `
-				transform: ${transform} scale(${t});
-				opacity: ${t}
-			`,
-		};
+	fallback(node) {
+		return fly(node, { duration: 400, y: -100 });
 	},
 });
