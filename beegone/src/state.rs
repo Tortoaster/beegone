@@ -2,11 +2,12 @@ use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 use crate::{
-    action::{Action, Actions, MoveAction, SpecialActions},
+    action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
     board::Board,
     iter::IteratorExt,
     piece::{Color, PieceKind},
     pos::{Pos, Shift},
+    Bee, Piece, Species,
 };
 
 #[typeshare]
@@ -83,70 +84,90 @@ impl State {
             })
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
 
-        let specials = SpecialActions::None;
+        let specials = match bee.species() {
+            // Drones, workers and guards have no special power
+            Species::Drone | Species::Worker | Species::Guard => SpecialActions::None,
+            // Nurses can promote adjacent workers to explorers, builders, or guards
+            Species::Nurse => SpecialActions::Nurse(Box::new(
+                from.adjacent()
+                    .filter(move |adj| {
+                        self.board
+                            .get(adj)
+                            .map(|piece| match piece.kind() {
+                                PieceKind::Bee(adj) => {
+                                    adj.color() == bee.color() && adj.species() == Species::Worker
+                                }
+                                PieceKind::Wall => false,
+                            })
+                            .unwrap_or_default()
+                    })
+                    .flat_map(move |adj| {
+                        vec![Species::Explorer, Species::Builder, Species::Guard]
+                            .into_iter()
+                            .map(move |species| {
+                                Action::Spawn(SpawnAction::new(
+                                    adj,
+                                    Piece::new(PieceKind::Bee(Bee::new(bee.color(), species))),
+                                ))
+                            })
+                    }),
+            )),
+            // Explorers can move any number of tiles in a straight line, as long as
+            // they are all empty, and optionally capture on the last tile TODO
+            Species::Explorer => SpecialActions::Explorer(std::iter::empty()),
+            // Builders can spawn walls on empty adjacent tiles
+            Species::Builder => SpecialActions::Builder(Box::new(
+                from.adjacent()
+                    .within_bounds()
+                    .filter(move |adj| self.board.get(adj).is_none())
+                    .map(|adj| Action::Spawn(SpawnAction::new(adj, Piece::new(PieceKind::Wall)))),
+            )),
+            // Queens can spawn drones on empty adjacent tiles, and if a drone is
+            // already adjacent to the queen, she can spawn workers as well
+            Species::Queen => {
+                let drones = from
+                    .adjacent()
+                    .within_bounds()
+                    .filter(move |adj| self.board.get(adj).is_none())
+                    .map(move |adj| {
+                        Action::Spawn(SpawnAction::new(
+                            adj,
+                            Piece::new(PieceKind::Bee(Bee::new(bee.color(), Species::Drone))),
+                        ))
+                    });
 
-        // let specials = match bee.species {
-        //     // Drones, workers and guards have no special power
-        //     Species::Drone | Species::Worker | Species::Guard =>
-        // SpecialActions::None,     // Nurses can promote adjacent workers to
-        // explorers, builders, or guards     Species::Nurse =>
-        // SpecialActions::Nurse(         from.adjacent()
-        //             .filter(move |adj| {
-        //                 self.pieces
-        //                     .get(adj)
-        //                     .map(|piece| match piece {
-        //                         Piece::Bee(bee) => color == bee.color && *s ==
-        // Species::Worker,                         Piece::Wall => false,
-        //                     })
-        //                     .unwrap_or_default()
-        //             })
-        //             .flat_map(move |adj| {
-        //                 vec![Species::Explorer, Species::Builder, Species::Guard]
-        //                     .into_iter()
-        //                     .map(move |species| Action::Spawn(adj, Piece::Bee(*color,
-        // species)))             }),
-        //     ),
-        //     // Explorers can move any number of tiles in a straight line, as long as
-        //     // they are all empty, and optionally capture on the last tile TODO
-        //     Species::Explorer => SpecialActions::Explorer(iter::empty()),
-        //     // Builders can spawn walls on empty adjacent tiles
-        //     Species::Builder => Box::new(
-        //         from.adjacent()
-        //             .filter(move |adj| self.in_bounds(*adj))
-        //             .filter(move |adj| self.pieces.get(adj).is_none())
-        //             .map(|adj| Action::Spawn(adj, Piece::Wall)),
-        //     ),
-        //     // Queens can spawn drones on empty adjacent tiles, and if a drone is
-        //     // already adjacent to the queen, she can spawn workers as well
-        //     Species::Queen => {
-        //         let drones = from
-        //             .adjacent()
-        //             .filter(move |adj2| self.in_bounds(*adj2))
-        //             .filter(move |adj2| self.pieces.get(adj2).is_none())
-        //             .map(move |adj| {
-        //                 Action::Spawn(adj, Piece::Bee(Bee::new(*color,
-        // Species::Drone)))             });
-        //
-        //         let fertilized = from.adjacent().any(|adj| {
-        //             self.pieces.get(&adj) == Some(&Piece::Bee(Bee::new(color,
-        // Species::Drone)))         });
-        //
-        //         let workers = if fertilized {
-        //             Box::new(
-        //                 from.adjacent()
-        //                     .filter(move |adj2| self.in_bounds(*adj2))
-        //                     .filter(move |adj2| self.pieces.get(adj2).is_none())
-        //                     .map(move |adj| {
-        //                         Action::Spawn(adj, Piece::Bee(Bee::new(*color,
-        // Species::Worker)))                     }),
-        //             )
-        //         } else {
-        //             Box::new(iter::empty()) as Box<dyn Iterator<Item = Action>>
-        //         };
-        //
-        //         Box::new(drones.chain(workers))
-        //     }
-        // };
+                let fertilized = from.adjacent().any(|adj| {
+                    self.board
+                        .get(&adj)
+                        .map(|piece| {
+                            piece.kind().bee().copied()
+                                == Some(Bee::new(bee.color(), Species::Drone))
+                        })
+                        .unwrap_or_default()
+                });
+
+                let workers = if fertilized {
+                    Box::new(
+                        from.adjacent()
+                            .within_bounds()
+                            .filter(move |adj| self.board.get(adj).is_none())
+                            .map(move |adj| {
+                                Action::Spawn(SpawnAction::new(
+                                    adj,
+                                    Piece::new(PieceKind::Bee(Bee::new(
+                                        bee.color(),
+                                        Species::Worker,
+                                    ))),
+                                ))
+                            }),
+                    )
+                } else {
+                    Box::new(std::iter::empty()) as Box<dyn Iterator<Item = Action>>
+                };
+
+                SpecialActions::Queen(Box::new(drones.chain(workers)))
+            }
+        };
 
         Actions::new(steps, leaps, captures, specials)
     }
@@ -162,7 +183,12 @@ impl State {
                 self.board.set(move_action.from(), None);
                 self.board.set(move_action.to(), Some(piece));
             }
-            Action::Spawn(_) => todo!(),
+            Action::Spawn(spawn_action) => {
+                // TODO: Legal?
+
+                self.board
+                    .set(spawn_action.on(), Some(spawn_action.spawn()));
+            }
         }
 
         self.turn = !self.turn;

@@ -24,11 +24,11 @@ impl MoveAction {
     pub fn new(from: Pos, to: Pos) -> Self {
         MoveAction { from, to }
     }
-    
+
     pub fn from(&self) -> Pos {
         self.from
     }
-    
+
     pub fn to(&self) -> Pos {
         self.to
     }
@@ -45,6 +45,14 @@ impl SpawnAction {
     pub fn new(on: Pos, spawn: Piece) -> Self {
         SpawnAction { on, spawn }
     }
+
+    pub fn on(&self) -> Pos {
+        self.on
+    }
+
+    pub fn spawn(self) -> Piece {
+        self.spawn
+    }
 }
 
 #[derive(Default)]
@@ -56,7 +64,7 @@ pub enum Actions<'a> {
         steps: Box<dyn Iterator<Item = Action> + 'a>,
         leaps: Box<dyn Iterator<Item = Action> + 'a>,
         captures: Box<dyn Iterator<Item = Action> + 'a>,
-        specials: SpecialActions,
+        specials: SpecialActions<'a>,
     },
 }
 
@@ -65,7 +73,7 @@ impl<'a> Actions<'a> {
         steps: impl Iterator<Item = Action> + 'a,
         leaps: impl Iterator<Item = Action> + 'a,
         captures: impl Iterator<Item = Action> + 'a,
-        specials: SpecialActions,
+        specials: SpecialActions<'a>,
     ) -> Self {
         Actions::Some {
             stage: 0,
@@ -117,17 +125,17 @@ impl Iterator for Actions<'_> {
     }
 }
 
-#[derive(Clone, Debug, Default)]
-pub enum SpecialActions {
+#[derive(Default)]
+pub enum SpecialActions<'a> {
     #[default]
     None,
-    Nurse(iter::Empty<Action>),
+    Nurse(Box<dyn Iterator<Item = Action> + 'a>),
     Explorer(iter::Empty<Action>),
-    Builder(iter::Empty<Action>),
-    Queen(iter::Empty<Action>),
+    Builder(Box<dyn Iterator<Item = Action> + 'a>),
+    Queen(Box<dyn Iterator<Item = Action> + 'a>),
 }
 
-impl Iterator for SpecialActions {
+impl Iterator for SpecialActions<'_> {
     type Item = Action;
 
     fn next(&mut self) -> Option<Self::Item> {

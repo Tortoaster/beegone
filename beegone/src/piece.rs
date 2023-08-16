@@ -116,6 +116,13 @@ impl PieceKind {
         }
     }
 
+    pub fn bee(&self) -> Option<&Bee> {
+        match self {
+            PieceKind::Bee(bee) => Some(&bee),
+            PieceKind::Wall => None,
+        }
+    }
+
     pub fn color(&self) -> Option<Color> {
         match self {
             PieceKind::Bee(bee) => Some(bee.color),
