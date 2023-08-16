@@ -40,7 +40,9 @@ impl State {
             Some(piece) => piece,
         };
 
-        let bee = match piece.kind() {
+        let kind = piece.kind();
+
+        let bee = match kind {
             PieceKind::Bee(bee) => bee,
             PieceKind::Wall => return Actions::None,
         };
@@ -114,7 +116,29 @@ impl State {
             )),
             // Explorers can move any number of tiles in a straight line, as long as
             // they are all empty, and optionally capture on the last tile TODO
-            Species::Explorer => SpecialActions::Explorer(std::iter::empty()),
+            Species::Explorer => {
+                SpecialActions::Explorer(Box::new(Shift::directions().flat_map(move |dir| {
+                    (1..)
+                        .map(move |distance| from + dir * distance)
+                        .scan(false, move |encountered_enemy, pos| {
+                            match (*encountered_enemy, self.board.get(&pos)) {
+                                (true, _) => None,
+                                (false, None) => Some(pos),
+                                (false, Some(piece)) => {
+                                    if kind.can_capture(&piece.kind()) {
+                                        *encountered_enemy = true;
+                                        Some(pos)
+                                    } else {
+                                        None
+                                    }
+                                }
+                            }
+                        })
+                        .skip(1)
+                        .take_while(|pos| Board::within_bounds(*pos))
+                        .map(move |to| Action::Move(MoveAction::new(from, to)))
+                })))
+            }
             // Builders can spawn walls on empty adjacent tiles
             Species::Builder => SpecialActions::Builder(Box::new(
                 from.adjacent()

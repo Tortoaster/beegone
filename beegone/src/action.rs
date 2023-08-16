@@ -1,5 +1,3 @@
-use std::iter;
-
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
@@ -130,7 +128,7 @@ pub enum SpecialActions<'a> {
     #[default]
     None,
     Nurse(Box<dyn Iterator<Item = Action> + 'a>),
-    Explorer(iter::Empty<Action>),
+    Explorer(Box<dyn Iterator<Item = Action> + 'a>),
     Builder(Box<dyn Iterator<Item = Action> + 'a>),
     Queen(Box<dyn Iterator<Item = Action> + 'a>),
 }
