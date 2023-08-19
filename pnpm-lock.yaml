@@ -6,7 +6,11 @@ settings:
 
 importers:
 
-  beegone_front_end:
+  front_end:
+    dependencies:
+      '@beegone/beegone':
+        specifier: link:../wasm
+        version: link:../wasm
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.0.0
@@ -62,6 +66,8 @@ importers:
       vite-plugin-wasm:
         specifier: ^3.2.2
         version: 3.2.2(vite@4.4.9)
+
+  wasm: {}
 
 packages:
 

@@ -5,8 +5,8 @@ import {
 	stateActionsFrom,
 	stateNew,
 	statePerform,
-} from '../../../beegone_wasm/beegone';
-import type { Action, Pos } from '../../../beegone_wasm/beegone_types';
+} from '@beegone/beegone';
+import type { Action, Pos } from '@beegone/beegone';
 
 function createState() {
 	const store = writable({

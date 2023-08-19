@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import type { Action } from '../../../beegone_wasm/beegone_types';
+	import type { Action } from '@beegone/beegone';
 
 	export let action: Action;
 

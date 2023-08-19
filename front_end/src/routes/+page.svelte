@@ -2,7 +2,7 @@
 	import PieceComponent from '../components/PieceComponent.svelte';
 	import Tile from '../components/Tile.svelte';
 	import { state } from '../stores/state';
-	import type { Pos } from '../../../beegone_wasm/beegone_types';
+	import type { Pos } from '@beegone/beegone';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
 	import LightSwitch from '../components/LightSwitch.svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Action } from '../../../beegone_wasm/beegone_types';
+	import type { Action } from '@beegone/beegone';
 	import ActionButton from './ActionButton.svelte';
 
 	export let actions: Action[];

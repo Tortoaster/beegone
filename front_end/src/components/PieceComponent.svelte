@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { send, receive } from '../animation/transition';
-	import type { Piece } from '../../../beegone_wasm/beegone_types';
+	import type { Piece } from '@beegone/beegone';
 	import Tile from './Tile.svelte';
 	import Token from './Token.svelte';
 

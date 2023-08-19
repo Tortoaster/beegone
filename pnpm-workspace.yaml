@@ -1,2 +1,3 @@
 packages:
-    - 'beegone_front_end'
+    - 'wasm'
+    - 'front_end'
