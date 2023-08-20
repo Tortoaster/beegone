@@ -1,7 +1,8 @@
-/beegone_wasm
 /target
+/wasm
 
 node_modules
+build
 .svelte-kit
 
 .eslintrc
