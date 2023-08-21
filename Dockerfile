@@ -9,9 +9,7 @@ RUN typeshare -l typescript -o wasm/types.d.ts beegone
 RUN wasm-pack build --release --out-dir ../wasm --scope beegone beegone
 
 FROM node:20-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install -g pnpm
 COPY --from=wasm /app /app
 WORKDIR /app
 
