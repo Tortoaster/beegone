@@ -1,16 +1,8 @@
-FROM rust:1.71-slim AS wasm_tools
-RUN cargo install typeshare-cli
-RUN cargo install wasm-pack
-
-FROM wasm_tools AS wasm
-COPY . /app
-WORKDIR /app
-RUN typeshare -l typescript -o wasm/types.d.ts beegone
-RUN wasm-pack build --release --out-dir ../wasm --scope beegone beegone
-
 FROM node:20-slim AS base
-RUN npm install -g pnpm
-COPY --from=wasm /app /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
 
 FROM base AS prod-deps

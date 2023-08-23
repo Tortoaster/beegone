@@ -19,26 +19,49 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Install typeshare-cli
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: typeshare-cli
+          version: "1.7.0"
+
+      - name: Create types with typeshare
+        run: typeshare -l typescript -o wasm/types.d.ts beegone
+
+      - name: Install wasm-pack
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: wasm-pack
+          version: "0.12.1"
+
+      - name: Compile to WASM
+        run: wasm-pack build --release --out-dir ../wasm --scope beegone beegone
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Log in to the Container registry
+
+      - name: Log into the Container registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
