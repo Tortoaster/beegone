@@ -46,7 +46,7 @@
 		<LightSwitch />
 	</div>
 	<svg
-		class="bg-amber-500 dark:bg-slate-800"
+		class="transition-colors duration-300 bg-amber-500 dark:bg-slate-800"
 		viewBox="{-viewBox / 2} {-viewBox / 2} {viewBox} {viewBox}"
 		xmlns="http://www.w3.org/2000/svg"
 		width="100vw"
@@ -56,10 +56,14 @@
 			<svg x={x(pos) * 0.9} y={y(pos) * 0.92} width={tileSize} height={tileSize}>
 				<Tile
 					height={-0.05}
-					sideClass="fill-amber-600 dark:fill-slate-600"
-					topClass="fill-amber-700 dark:fill-slate-500"
+					sideClass="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
+					topClass="transition-colors duration-300 fill-amber-700 dark:fill-slate-500"
 				>
-					<Tile size={0.6} height={0} topClass="fill-amber-800 dark:fill-slate-600" />
+					<Tile
+						size={0.6}
+						height={0}
+						topClass="transition-colors duration-300 fill-amber-800 dark:fill-slate-600"
+					/>
 					{#if state.get(pos) != null}
 						<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
 					{/if}

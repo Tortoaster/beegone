@@ -15,16 +15,16 @@
 
 	$: sideClass =
 		piece.kind.content?.color === 'light'
-			? 'fill-amber-400 dark:fill-slate-300'
-			: 'fill-amber-950 dark:fill-slate-900';
+			? 'transition-colors duration-300 fill-amber-400 dark:fill-slate-300'
+			: 'transition-colors duration-300 fill-amber-950 dark:fill-slate-900';
 	$: topClass =
 		piece.kind.content?.color === 'light'
-			? 'fill-amber-300 dark:fill-slate-100'
-			: 'fill-amber-900  dark:fill-slate-800';
+			? 'transition-colors duration-300 fill-amber-300 dark:fill-slate-100'
+			: 'transition-colors duration-300 fill-amber-900  dark:fill-slate-800';
 	$: iconClass =
 		piece.kind.content?.color === 'light'
-			? 'fill-amber-500 dark:fill-slate-400'
-			: 'fill-amber-700 dark:fill-slate-600';
+			? 'transition-colors duration-300 fill-amber-500 dark:fill-slate-400'
+			: 'transition-colors duration-300 fill-amber-700 dark:fill-slate-600';
 
 	const VIEW_BOX = 360;
 	const ICON_SIZE = 0.25 * VIEW_BOX;
@@ -39,10 +39,14 @@
 	{#if piece.kind.type === 'wall'}
 		<Tile
 			height={0.15}
-			sideClass="fill-amber-600 dark:fill-slate-600"
-			topClass="fill-amber-400 dark:fill-slate-400"
+			sideClass="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
+			topClass="transition-colors duration-300 fill-amber-400 dark:fill-slate-400"
 		>
-			<Tile size={0.6} height={0} topClass="fill-amber-300 dark:fill-slate-300" />
+			<Tile
+				size={0.6}
+				height={0}
+				topClass="transition-colors duration-300 fill-amber-300 dark:fill-slate-300"
+			/>
 		</Tile>
 	{:else}
 		<Token on:click size={0.45} height={0.08} {sideClass} {topClass}>
