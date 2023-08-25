@@ -1,12 +1,25 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { yeet } from '../animation/yeet';
-	import type { Action } from '@beegone/beegone';
+	import type { Action, Piece } from '@beegone/beegone';
+	import DigIcon from '../icons/actions/DigIcon.svelte';
+	import BuildIcon from '../icons/actions/BuildIcon.svelte';
+	import AttackIcon from '../icons/actions/AttackIcon.svelte';
+	import MoveIcon from '../icons/actions/MoveIcon.svelte';
+	import ExplorerIcon from '../icons/pieces/ExplorerIcon.svelte';
+	import BuilderIcon from '../icons/pieces/BuilderIcon.svelte';
+	import GuardIcon from '../icons/pieces/GuardIcon.svelte';
+	import DroneIcon from '../icons/pieces/DroneIcon.svelte';
+	import WorkerIcon from '../icons/pieces/WorkerIcon.svelte';
 
 	export let action: Action;
 	export let x = 0;
 	export let y = 0;
 	export let delay = 0;
+	/**
+	 * The piece present on the tile this button is on.
+	 */
+	export let piece: Piece | undefined;
 
 	$: inTransition = {
 		x: -x,
@@ -28,6 +41,9 @@
 			action: action,
 		});
 	}
+
+	const VIEW_BOX = 360;
+	const ICON_SIZE = VIEW_BOX / 6;
 </script>
 
 <svg
@@ -35,27 +51,91 @@
 	out:yeet|global={outTransition}
 	class="group cursor-pointer"
 	on:click={dispatchAction}
-	viewBox="0 0 300 300"
+	viewBox="0 0 ${VIEW_BOX} ${VIEW_BOX}"
 >
+	<circle
+		class="fill-black group-hover:fill-white"
+		cx={VIEW_BOX / 2}
+		cy={VIEW_BOX / 2}
+		r={ICON_SIZE}
+	/>
 	{#if action.type === 'move'}
-		<circle class="fill-black group-hover:fill-white" cx="150" cy="150" r="50" />
-		<text
-			x="150"
-			y="150"
-			dominant-baseline="middle"
-			text-anchor="middle"
-			class="text-2xl font-bold select-none fill-white group-hover:fill-black">Move</text
-		>
+		{#if piece === undefined}
+			<MoveIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else if piece.kind.type === 'wall'}
+			<DigIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else}
+			<AttackIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{/if}
+	{:else if action.content.spawn.kind.type === 'bee'}
+		{#if action.content.spawn.kind.content.species === 'drone'}
+			<DroneIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else if action.content.spawn.kind.content.species === 'worker'}
+			<WorkerIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else if action.content.spawn.kind.content.species === 'builder'}
+			<BuilderIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else if action.content.spawn.kind.content.species === 'explorer'}
+			<ExplorerIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else if action.content.spawn.kind.content.species === 'guard'}
+			<GuardIcon
+				topClass="fill-white group-hover:fill-black"
+				x={(VIEW_BOX - ICON_SIZE) / 2}
+				y={(VIEW_BOX - ICON_SIZE) / 2}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+			/>
+		{:else}
+			<text fill="red">!</text>
+		{/if}
 	{:else}
-		<circle class="fill-black group-hover:fill-white" cx="150" cy="150" r="50" />
-		<text
-			x="150"
-			y="150"
-			dominant-baseline="middle"
-			text-anchor="middle"
-			class="text-2xl font-bold select-none fill-white group-hover:fill-black"
-		>
-			{action.content.spawn.kind.type == 'bee' ? action.content.spawn.kind.content.species : 'Wall'}
-		</text>
+		<BuildIcon
+			topClass="fill-white group-hover:fill-black"
+			x={(VIEW_BOX - ICON_SIZE) / 2}
+			y={(VIEW_BOX - ICON_SIZE) / 2}
+			width={ICON_SIZE}
+			height={ICON_SIZE}
+		/>
 	{/if}
 </svg>

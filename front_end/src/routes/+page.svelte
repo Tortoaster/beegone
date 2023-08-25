@@ -63,7 +63,13 @@
 					{#if state.get(pos) != null}
 						<PieceComponent on:click={() => select(pos)} piece={state.get(pos)} />
 					{/if}
-					<ActionButtonGroup {selected} {pos} on:action={performAction} actions={actionsOn(pos)} />
+					<ActionButtonGroup
+						{selected}
+						{pos}
+						on:action={performAction}
+						actions={actionsOn(pos)}
+						piece={state.get(pos)}
+					/>
 				</Tile>
 			</svg>
 		{/each}

@@ -6,7 +6,15 @@
 	export let height: number;
 </script>
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" {x} {y} {width} {height}>
+<svg
+	class="transform rotate-90 origin-center"
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 512 512"
+	{x}
+	{y}
+	{width}
+	{height}
+>
 	<!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
 	<path
 		class={topClass}
