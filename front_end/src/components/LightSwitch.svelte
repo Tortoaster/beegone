@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import ThemeIcon from '../icons/ui/ThemeIcon.svelte';
 
 	const STORAGE_KEY = 'theme';
 
@@ -24,22 +25,15 @@
 		}
 	};
 
-	const applyCurrentTheme = () => applyTheme(currentTheme());
-
 	onMount(() => {
-		applyCurrentTheme();
+		applyTheme(currentTheme());
 	});
 </script>
 
 <button class="p-2" on:click={toggleTheme}>
-	<svg class="w-8 h-8" viewBox="-4 -4 8 8">
-		<path
-			class="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
-			d="M-1,-2 l4,0 a1,1,0,0,1,1,1 l0,4 a1,1,0,0,1,-1,1 l-4,0 a1,1,0,0,1,-1,-1 l0,-4 a1,1,0,0,1,1,-1z"
-		/>
-		<path
-			class="transition-colors duration-300 fill-amber-400 dark:fill-slate-400"
-			d="M-3,-4 l4,0 a1,1,0,0,1,1,1 l0,4 a1,1,0,0,1,-1,1 l-4,0 a1,1,0,0,1,-1,-1 l0,-4 a1,1,0,0,1,1,-1z"
-		/>
-	</svg>
+	<ThemeIcon
+		width="2em"
+		height="2em"
+		topClass="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
+	/>
 </button>
