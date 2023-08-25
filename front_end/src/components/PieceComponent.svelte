@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { send, receive } from '../animation/transition';
-	import type { Piece } from '@beegone/beegone';
+	import type { Piece, WithId } from '@beegone/beegone';
 	import Tile from './Tile.svelte';
 	import Token from './Token.svelte';
 	import DroneIcon from '../icons/pieces/DroneIcon.svelte';
@@ -11,18 +11,18 @@
 	import GuardIcon from '../icons/pieces/GuardIcon.svelte';
 	import QueenIcon from '../icons/pieces/QueenIcon.svelte';
 
-	export let piece: Piece;
+	export let piece: WithId<Piece>;
 
 	$: sideClass =
-		piece.kind.content?.color === 'light'
+		piece.inner.content?.color === 'light'
 			? 'transition-colors duration-300 fill-amber-400 dark:fill-slate-300'
 			: 'transition-colors duration-300 fill-amber-950 dark:fill-slate-900';
 	$: topClass =
-		piece.kind.content?.color === 'light'
+		piece.inner.content?.color === 'light'
 			? 'transition-colors duration-300 fill-amber-300 dark:fill-slate-100'
 			: 'transition-colors duration-300 fill-amber-900  dark:fill-slate-800';
 	$: iconClass =
-		piece.kind.content?.color === 'light'
+		piece.inner.content?.color === 'light'
 			? 'transition-colors duration-300 fill-amber-500 dark:fill-slate-400'
 			: 'transition-colors duration-300 fill-amber-700 dark:fill-slate-600';
 
@@ -36,7 +36,7 @@
 	in:receive={{ key: piece.id }}
 	out:send={{ key: piece.id }}
 >
-	{#if piece.kind.type === 'wall'}
+	{#if piece.inner.type === 'wall'}
 		<Tile
 			height={0.15}
 			sideClass="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
@@ -50,7 +50,7 @@
 		</Tile>
 	{:else}
 		<Token on:click size={0.45} height={0.08} {sideClass} {topClass}>
-			{#if piece.kind.content.species === 'drone'}
+			{#if piece.inner.content.species === 'drone'}
 				<DroneIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -58,7 +58,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'worker'}
+			{:else if piece.inner.content.species === 'worker'}
 				<WorkerIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -66,7 +66,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'nurse'}
+			{:else if piece.inner.content.species === 'nurse'}
 				<NurseIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -74,7 +74,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'explorer'}
+			{:else if piece.inner.content.species === 'explorer'}
 				<ExplorerIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -82,7 +82,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'builder'}
+			{:else if piece.inner.content.species === 'builder'}
 				<BuilderIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -90,7 +90,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'guard'}
+			{:else if piece.inner.content.species === 'guard'}
 				<GuardIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -98,7 +98,7 @@
 					width={ICON_SIZE}
 					height={ICON_SIZE}
 				/>
-			{:else if piece.kind.content.species === 'queen'}
+			{:else if piece.inner.content.species === 'queen'}
 				<QueenIcon
 					topClass={iconClass}
 					x={(VIEW_BOX - ICON_SIZE) / 2}

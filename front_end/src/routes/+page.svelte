@@ -24,7 +24,7 @@
 			selected = null;
 		} else {
 			let piece = state.get(pos);
-			if (piece?.kind.type === 'bee' && piece.kind.content.color === state.turn()) {
+			if (piece?.inner.type === 'bee' && piece.inner.content.color === state.turn()) {
 				selected = pos;
 			}
 		}
@@ -72,7 +72,7 @@
 						{pos}
 						on:action={performAction}
 						actions={actionsOn(pos)}
-						piece={state.get(pos)}
+						piece={state.get(pos)?.inner}
 					/>
 				</Tile>
 			</svg>

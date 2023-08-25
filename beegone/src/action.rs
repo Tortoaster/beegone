@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
-use crate::{piece::Piece, pos::Pos};
+use crate::{id::WithId, piece::Piece, pos::Pos};
 
 #[typeshare]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
@@ -36,11 +36,11 @@ impl MoveAction {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct SpawnAction {
     on: Pos,
-    spawn: Piece,
+    spawn: WithId<Piece>,
 }
 
 impl SpawnAction {
-    pub fn new(on: Pos, spawn: Piece) -> Self {
+    pub fn new(on: Pos, spawn: WithId<Piece>) -> Self {
         SpawnAction { on, spawn }
     }
 
@@ -48,7 +48,7 @@ impl SpawnAction {
         self.on
     }
 
-    pub fn spawn(self) -> Piece {
+    pub fn spawn(self) -> WithId<Piece> {
         self.spawn
     }
 }

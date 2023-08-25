@@ -4,10 +4,11 @@ use typeshare::typeshare;
 use crate::{
     action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
     board::Board,
+    id::IdExt,
     iter::IteratorExt,
-    piece::{Color, PieceKind},
+    piece::{Color, Piece},
     pos::{Pos, Shift},
-    Bee, Piece, Species,
+    Bee, Species,
 };
 
 #[typeshare]
@@ -40,11 +41,9 @@ impl State {
             Some(piece) => piece,
         };
 
-        let kind = piece.kind();
-
-        let bee = match kind {
-            PieceKind::Bee(bee) => bee,
-            PieceKind::Wall => return Actions::None,
+        let bee = match *piece {
+            Piece::Bee(bee) => bee,
+            Piece::Wall => return Actions::None,
         };
 
         if bee.color() != self.turn {
@@ -64,7 +63,7 @@ impl State {
             .filter(move |shift| {
                 self.board
                     .get(&(from + *shift))
-                    .and_then(|piece| piece.kind().color())
+                    .and_then(|piece| piece.color())
                     .map(|color| color == bee.color())
                     .unwrap_or_default()
             })
@@ -81,7 +80,7 @@ impl State {
                 self.board
                     .get(adj)
                     .as_ref()
-                    .map(|p| piece.kind().can_capture(&p.kind()))
+                    .map(|other| piece.can_capture(&other))
                     .unwrap_or_default()
             })
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
@@ -95,11 +94,11 @@ impl State {
                     .filter(move |adj| {
                         self.board
                             .get(adj)
-                            .map(|piece| match piece.kind() {
-                                PieceKind::Bee(adj) => {
+                            .map(|piece| match *piece {
+                                Piece::Bee(adj) => {
                                     adj.color() == bee.color() && adj.species() == Species::Worker
                                 }
-                                PieceKind::Wall => false,
+                                Piece::Wall => false,
                             })
                             .unwrap_or_default()
                     })
@@ -109,7 +108,7 @@ impl State {
                             .map(move |species| {
                                 Action::Spawn(SpawnAction::new(
                                     adj,
-                                    Piece::new(PieceKind::Bee(Bee::new(bee.color(), species))),
+                                    Piece::Bee(Bee::new(bee.color(), species)).with_id(),
                                 ))
                             })
                     }),
@@ -124,8 +123,8 @@ impl State {
                             match (*encountered_enemy, self.board.get(&pos)) {
                                 (true, _) => None,
                                 (false, None) => Some(pos),
-                                (false, Some(piece)) => {
-                                    if kind.can_capture(&piece.kind()) {
+                                (false, Some(other)) => {
+                                    if piece.can_capture(&other) {
                                         *encountered_enemy = true;
                                         Some(pos)
                                     } else {
@@ -144,7 +143,7 @@ impl State {
                 from.adjacent()
                     .within_bounds()
                     .filter(move |adj| self.board.get(adj).is_none())
-                    .map(|adj| Action::Spawn(SpawnAction::new(adj, Piece::new(PieceKind::Wall)))),
+                    .map(|adj| Action::Spawn(SpawnAction::new(adj, Piece::Wall.with_id()))),
             )),
             // Queens can spawn drones on empty adjacent tiles, and if a drone is
             // already adjacent to the queen, she can spawn workers as well
@@ -156,7 +155,7 @@ impl State {
                     .map(move |adj| {
                         Action::Spawn(SpawnAction::new(
                             adj,
-                            Piece::new(PieceKind::Bee(Bee::new(bee.color(), Species::Drone))),
+                            Piece::Bee(Bee::new(bee.color(), Species::Drone)).with_id(),
                         ))
                     });
 
@@ -164,8 +163,7 @@ impl State {
                     self.board
                         .get(&adj)
                         .map(|piece| {
-                            piece.kind().bee().copied()
-                                == Some(Bee::new(bee.color(), Species::Drone))
+                            piece.bee().copied() == Some(Bee::new(bee.color(), Species::Drone))
                         })
                         .unwrap_or_default()
                 });
@@ -178,10 +176,7 @@ impl State {
                             .map(move |adj| {
                                 Action::Spawn(SpawnAction::new(
                                     adj,
-                                    Piece::new(PieceKind::Bee(Bee::new(
-                                        bee.color(),
-                                        Species::Worker,
-                                    ))),
+                                    Piece::Bee(Bee::new(bee.color(), Species::Worker)).with_id(),
                                 ))
                             }),
                     )

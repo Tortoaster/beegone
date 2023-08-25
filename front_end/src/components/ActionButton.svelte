@@ -68,7 +68,7 @@
 				width={ICON_SIZE}
 				height={ICON_SIZE}
 			/>
-		{:else if piece.kind.type === 'wall'}
+		{:else if piece.type === 'wall'}
 			<DigIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -85,8 +85,8 @@
 				height={ICON_SIZE}
 			/>
 		{/if}
-	{:else if action.content.spawn.kind.type === 'bee'}
-		{#if action.content.spawn.kind.content.species === 'drone'}
+	{:else if action.content.spawn.inner.type === 'bee'}
+		{#if action.content.spawn.inner.content.species === 'drone'}
 			<DroneIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -94,7 +94,7 @@
 				width={ICON_SIZE}
 				height={ICON_SIZE}
 			/>
-		{:else if action.content.spawn.kind.content.species === 'worker'}
+		{:else if action.content.spawn.inner.content.species === 'worker'}
 			<WorkerIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -102,7 +102,7 @@
 				width={ICON_SIZE}
 				height={ICON_SIZE}
 			/>
-		{:else if action.content.spawn.kind.content.species === 'builder'}
+		{:else if action.content.spawn.inner.content.species === 'builder'}
 			<BuilderIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -110,7 +110,7 @@
 				width={ICON_SIZE}
 				height={ICON_SIZE}
 			/>
-		{:else if action.content.spawn.kind.content.species === 'explorer'}
+		{:else if action.content.spawn.inner.content.species === 'explorer'}
 			<ExplorerIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}
@@ -118,7 +118,7 @@
 				width={ICON_SIZE}
 				height={ICON_SIZE}
 			/>
-		{:else if action.content.spawn.kind.content.species === 'guard'}
+		{:else if action.content.spawn.inner.content.species === 'guard'}
 			<GuardIcon
 				topClass="fill-white group-hover:fill-black"
 				x={(VIEW_BOX - ICON_SIZE) / 2}

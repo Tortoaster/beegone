@@ -5,10 +5,10 @@ use wasm_bindgen::{prelude::wasm_bindgen, JsCast, JsValue};
 use crate::{Action, Board, Pos, State};
 
 #[wasm_bindgen(typescript_custom_section)]
-const IMPORTS: &str = "import { Action, Board, Piece, Pos, State } from './types';";
+const IMPORTS: &str = "import { Action, Board, Piece, Pos, State, WithId } from './types';";
 
 #[wasm_bindgen(typescript_custom_section)]
-const EXPORTS: &str = "export { Action, Board, Piece, Pos, State };";
+const EXPORTS: &str = "export { Action, Board, Piece, Pos, State, WithId };";
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,7 +21,7 @@ extern "C" {
     #[wasm_bindgen(typescript_type = "Board")]
     pub type JsBoard;
 
-    #[wasm_bindgen(typescript_type = "Piece")]
+    #[wasm_bindgen(typescript_type = "WithId<Piece>")]
     pub type JsPiece;
 
     #[wasm_bindgen(typescript_type = "Pos")]
