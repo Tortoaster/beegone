@@ -30,7 +30,6 @@
 	$: outTransition = {
 		x,
 		y,
-		delay: (Math.atan2(y, x) + Math.PI) * 30 + delay,
 		duration: 200,
 	};
 
