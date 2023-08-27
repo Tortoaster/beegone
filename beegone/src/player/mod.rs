@@ -44,7 +44,7 @@ impl Player {
     pub async fn get_action(&self, state: &mut State) -> Action {
         match self {
             Player::Local => local::retrieve_action().await,
-            Player::Computer(rival) => rival.get_best(state, 4).unwrap(),
+            Player::Computer(rival) => rival.get_best(state, 3).unwrap(),
             Player::Remote => todo!(),
         }
     }

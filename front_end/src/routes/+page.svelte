@@ -38,12 +38,6 @@
 		await state.progress();
 	}
 
-	onMount(async () => {
-		while (true) {
-			await state.progress();
-		}
-	});
-
 	const viewBox = 360;
 	const tileSize = viewBox / 6;
 	const x = (pos: Pos) => (tileSize / 2) * ((3 / 2) * pos.q - 1);
