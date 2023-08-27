@@ -135,6 +135,10 @@ impl Board {
     pub fn positions() -> impl Iterator<Item = Pos> {
         Self::POSITIONS.into_iter()
     }
+
+    pub fn pieces(&self) -> &BTreeMap<Pos, WithId<Piece>> {
+        &self.pieces
+    }
 }
 
 impl Default for Board {

@@ -1,4 +1,5 @@
 use js_sys::Array;
+use rival::{MaxN, Rival};
 use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::{prelude::wasm_bindgen, JsCast, JsValue};
 
@@ -36,7 +37,9 @@ extern "C" {
 
 #[wasm_bindgen(js_name = "stateNew")]
 pub fn state_new() -> Result<JsState, JsValue> {
-    let state = State::new(Player::Computer);
+    player::initialize(Player::Computer(Rival::new(MaxN)));
+
+    let state = State::new();
 
     let js_state = JsState {
         obj: to_value(&state)?,
@@ -73,7 +76,7 @@ pub async fn submit_action(action: JsAction) -> Result<(), JsValue> {
 pub async fn state_progress(state: JsState) -> Result<JsState, JsValue> {
     let mut state: State = from_value(state.obj)?;
 
-    state.progress().await?;
+    player::progress(&mut state).await?;
 
     let js_state = JsState {
         obj: to_value(&state)?,

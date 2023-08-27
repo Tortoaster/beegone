@@ -58,6 +58,7 @@ name = "beegone"
 version = "0.1.0"
 dependencies = [
  "js-sys",
+ "rival",
  "serde",
  "serde-wasm-bindgen",
  "tokio",
@@ -225,6 +226,11 @@ checksum = "50f3b39ccfb720540debaa0164757101c08ecb8d326b15358ce76a62c7e85965"
 dependencies = [
  "proc-macro2",
 ]
+
+[[package]]
+name = "rival"
+version = "0.1.0"
+source = "git+https://github.com/Tortoaster/rival.git?rev=7f14f47#7f14f4731932876b1de01ac234e660eb916a83c6"
 
 [[package]]
 name = "rustc-demangle"
