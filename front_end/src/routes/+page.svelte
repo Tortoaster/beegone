@@ -5,6 +5,7 @@
 	import type { Pos } from '@beegone/beegone';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
 	import LightSwitch from '../components/LightSwitch.svelte';
+	import { onMount } from 'svelte';
 
 	let selected: Pos | null = null;
 
@@ -30,10 +31,18 @@
 		}
 	}
 
-	function performAction(event: CustomEvent) {
-		state.perform(event.detail.action);
+	async function performAction(event: CustomEvent) {
+		await state.perform(event.detail.action);
+		await state.progress();
 		selected = null;
+		await state.progress();
 	}
+
+	onMount(async () => {
+		while (true) {
+			await state.progress();
+		}
+	});
 
 	const viewBox = 360;
 	const tileSize = viewBox / 6;

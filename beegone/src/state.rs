@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
@@ -7,28 +9,40 @@ use crate::{
     id::IdExt,
     iter::IteratorExt,
     piece::{Color, Piece},
+    player::Player,
     pos::{Pos, Shift},
     Bee, Species,
 };
 
 #[typeshare]
-#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub struct State {
     board: Board,
     turn: Color,
+    // TODO: Move elsewhere
+    #[typeshare(skip)]
+    players: BTreeMap<Color, Player>,
 }
 
 impl State {
-    pub fn new() -> Self {
-        State::default()
+    pub fn new(opponent: Player) -> Self {
+        let local_color = Color::Light;
+
+        let mut players = BTreeMap::new();
+
+        players.insert(local_color, Player::Local);
+        players.insert(!local_color, opponent);
+
+        State {
+            board: Board::default(),
+            turn: Color::default(),
+            players,
+        }
     }
 
-    pub fn board(&self) -> &Board {
-        &self.board
-    }
-
-    pub fn turn(&self) -> Color {
-        self.turn
+    pub async fn progress(&mut self) -> Result<(), &'static str> {
+        let action = self.players[&self.turn].get_action(&self).await;
+        self.perform(action)
     }
 
     pub fn actions<'a>(&'a self) -> impl Iterator<Item = Action> + 'a {
@@ -191,7 +205,7 @@ impl State {
         Actions::new(steps, leaps, captures, specials)
     }
 
-    pub fn perform(&mut self, action: Action) -> Result<(), &'static str> {
+    fn perform(&mut self, action: Action) -> Result<(), &'static str> {
         match action {
             Action::Move(move_action) => {
                 self.actions_from(move_action.from())

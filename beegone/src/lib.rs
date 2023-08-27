@@ -9,6 +9,7 @@ mod board;
 mod id;
 mod iter;
 mod piece;
+mod player;
 mod pos;
 mod state;
 mod wasm;

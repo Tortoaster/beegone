@@ -19,8 +19,8 @@ impl Not for Color {
 
     fn not(self) -> Self::Output {
         match self {
-            Color::Dark => Color::Light,
             Color::Light => Color::Dark,
+            Color::Dark => Color::Light,
         }
     }
 }

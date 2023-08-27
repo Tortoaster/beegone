@@ -2,7 +2,7 @@ use js_sys::Array;
 use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::{prelude::wasm_bindgen, JsCast, JsValue};
 
-use crate::{Action, Board, Pos, State};
+use crate::{player, player::Player, Action, Board, Pos, State};
 
 #[wasm_bindgen(typescript_custom_section)]
 const IMPORTS: &str = "import { Action, Board, Piece, Pos, State, WithId } from './types';";
@@ -36,7 +36,7 @@ extern "C" {
 
 #[wasm_bindgen(js_name = "stateNew")]
 pub fn state_new() -> Result<JsState, JsValue> {
-    let state = State::new();
+    let state = State::new(Player::Computer);
 
     let js_state = JsState {
         obj: to_value(&state)?,
@@ -60,12 +60,20 @@ pub fn state_actions_from(state: JsState, pos: JsPos) -> Result<JsActionArray, J
     Ok(array)
 }
 
-#[wasm_bindgen(js_name = "statePerform")]
-pub fn state_perform(state: JsState, action: JsAction) -> Result<JsState, JsValue> {
-    let mut state: State = from_value(state.obj)?;
+#[wasm_bindgen(js_name = "submitAction")]
+pub async fn submit_action(action: JsAction) -> Result<(), JsValue> {
     let action: Action = from_value(action.obj)?;
 
-    state.perform(action)?;
+    player::submit_action(action).await;
+
+    Ok(())
+}
+
+#[wasm_bindgen(js_name = "stateProgress")]
+pub async fn state_progress(state: JsState) -> Result<JsState, JsValue> {
+    let mut state: State = from_value(state.obj)?;
+
+    state.progress().await?;
 
     let js_state = JsState {
         obj: to_value(&state)?,

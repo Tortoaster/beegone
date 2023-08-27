@@ -67,6 +67,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(vite@4.4.9)
 
+  wasm: {}
+
 packages:
 
   /@aashutoshrathi/word-wrap@1.2.6:
