@@ -4,7 +4,7 @@ use typeshare::typeshare;
 use crate::{
     action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
     board::Board,
-    id::IdExt,
+    id::{IdExt, WithId},
     iter::IteratorExt,
     piece::{Color, Piece},
     pos::{Pos, Shift},
@@ -64,7 +64,10 @@ impl State {
             })
             .map(move |shift| from + shift * 2)
             .within_bounds()
-            .filter(move |pos| self.board.get(pos).is_none())
+            .filter(move |pos| match self.board.get(pos) {
+                None => true,
+                Some(other) => piece.can_capture(&other),
+            })
             .map(move |pos| Action::Move(MoveAction::new(from, pos)));
 
         // Most bees can capture weaker adjacent pieces of the opposite color, and
