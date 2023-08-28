@@ -32,8 +32,8 @@ pub enum Species {
     Drone,
     Worker,
     Nurse,
-    Explorer,
     Builder,
+    Explorer,
     Guard,
     Queen,
 }
