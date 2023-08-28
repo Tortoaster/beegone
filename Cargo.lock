@@ -230,7 +230,7 @@ dependencies = [
 [[package]]
 name = "rival"
 version = "0.1.0"
-source = "git+https://github.com/Tortoaster/rival.git?rev=7f14f47#7f14f4731932876b1de01ac234e660eb916a83c6"
+source = "git+https://github.com/Tortoaster/rival.git?rev=53247c9#53247c9019554742935fc810b1b28b484fc568dc"
 
 [[package]]
 name = "rustc-demangle"

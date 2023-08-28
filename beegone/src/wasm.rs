@@ -1,5 +1,7 @@
+use std::sync::Mutex;
+
 use js_sys::Array;
-use rival::{MaxN, Rival};
+use rival::Rival;
 use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::{prelude::wasm_bindgen, JsCast, JsValue};
 
@@ -37,7 +39,7 @@ extern "C" {
 
 #[wasm_bindgen(js_name = "stateNew")]
 pub fn state_new() -> Result<JsState, JsValue> {
-    player::initialize(Player::Computer(Rival::new(MaxN)));
+    player::initialize(Player::Computer(Mutex::new(Rival::new())));
 
     let state = State::new();
 

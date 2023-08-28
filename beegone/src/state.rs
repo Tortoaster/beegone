@@ -210,6 +210,22 @@ impl State {
         Ok(())
     }
 
+    pub fn perform_unchecked(&mut self, action: Action) {
+        match action {
+            Action::Move(move_action) => {
+                let piece = self.board.get(&move_action.from()).unwrap();
+                self.board.set(move_action.from(), None);
+                self.board.set(move_action.to(), Some(piece));
+            }
+            Action::Spawn(spawn_action) => {
+                self.board
+                    .set(spawn_action.on(), Some(spawn_action.spawn()));
+            }
+        }
+
+        self.turn = !self.turn;
+    }
+
     pub fn turn(&self) -> Color {
         self.turn
     }

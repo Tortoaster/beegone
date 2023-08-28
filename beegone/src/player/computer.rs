@@ -1,4 +1,4 @@
-use rival::{EvaluateTwoPlayers, Moves, PlayClone, Value};
+use rival::{EvaluateZeroSum, Moves, PlayClone, Value};
 
 use crate::{Action, Bee, Color, Species, State};
 
@@ -13,12 +13,12 @@ impl Moves for State {
 
 impl PlayClone for State {
     fn play(&mut self, m: &Self::Move) {
-        self.perform(*m).unwrap()
+        self.perform_unchecked(*m)
     }
 }
 
-impl EvaluateTwoPlayers for State {
-    fn second_players_turn(&self) -> bool {
+impl EvaluateZeroSum for State {
+    fn min_turn(&self) -> bool {
         self.turn() == Color::Dark
     }
 

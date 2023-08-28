@@ -1,6 +1,9 @@
-use std::{collections::BTreeMap, sync::OnceLock};
+use std::{
+    collections::BTreeMap,
+    sync::{Mutex, OnceLock},
+};
 
-use rival::{MaxN, Rival};
+use rival::{Negamax, Rival};
 
 use crate::{Action, Color, State};
 
@@ -31,12 +34,11 @@ pub async fn progress(state: &mut State) -> Result<(), &'static str> {
     state.perform(action)
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Debug, Default)]
 pub enum Player {
     #[default]
     Local,
-    Computer(Rival<State, MaxN, 2>),
-    Remote,
+    Computer(Mutex<Rival<State, Negamax, 2>>),
 }
 
 impl Player {
@@ -44,8 +46,7 @@ impl Player {
     pub async fn get_action(&self, state: &mut State) -> Action {
         match self {
             Player::Local => local::retrieve_action().await,
-            Player::Computer(rival) => rival.get_best(state, 3).unwrap(),
-            Player::Remote => todo!(),
+            Player::Computer(rival) => rival.lock().unwrap().get_best(state, 5).unwrap(),
         }
     }
 }
