@@ -2,5 +2,10 @@
 members = ["beegone"]
 resolver = "2"
 
+# Minimize binary size, but with speed optimizations
 [profile.release]
-opt-level = "s"
+codegen-units = 1
+# lto = true
+opt-level = 3
+# panic = "abort"
+strip = true

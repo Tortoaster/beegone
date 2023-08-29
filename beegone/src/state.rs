@@ -4,7 +4,7 @@ use typeshare::typeshare;
 use crate::{
     action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
     board::Board,
-    id::{IdExt, WithId},
+    id::IdExt,
     iter::IteratorExt,
     piece::{Color, Piece},
     pos::{Pos, Shift},
