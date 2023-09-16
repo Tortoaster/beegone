@@ -12,8 +12,8 @@
 	export let piece: Piece | undefined;
 
 	$: difference = selected === null ? pos : { q: selected.q - pos.q, r: selected.r - pos.r };
-	$: angle = Math.atan2(y(difference), x(difference));
-	$: delay = (angle + Math.PI) * 30 + length(difference) * 60;
+	$: angle = selected === null ? 0 : Math.atan2(y(pos) - y(selected), x(pos) - x(selected));
+	$: delay = (angle + Math.PI) * 30 + length(difference) * 2 * Math.PI * 30;
 
 	const x = (pos: Pos) => (3 / 2) * pos.q - 1;
 	const y = (pos: Pos) => (Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r - 1;
