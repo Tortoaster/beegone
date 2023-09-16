@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import ThemeIcon from '../icons/ui/ThemeIcon.svelte';
 
 	const STORAGE_KEY = 'theme';
 
@@ -31,9 +30,7 @@
 </script>
 
 <button class="p-2" on:click={toggleTheme}>
-	<ThemeIcon
-		width="2em"
-		height="2em"
-		topClass="transition-colors duration-300 fill-amber-600 dark:fill-slate-600"
-	/>
+	<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em">
+		<image xlink:href="/theme.svg" width="100%" height="100%" />
+	</svg>
 </button>
