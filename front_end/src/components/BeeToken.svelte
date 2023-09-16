@@ -60,12 +60,12 @@
 				<feMergeNode in="Offset" />
 			</feMerge>
 		</filter>
-		<filter id="light-icon-color" y="-25%" height="125%">
+		<filter id="light-icon-color" y="-40%" height="140%">
 			<feFlood class="transition-all duration-300 flood-amber-500 dark:flood-slate-400" />
 			<feComposite operator="in" in2="SourceGraphic" />
 			<feOffset dy="-6" />
 		</filter>
-		<filter id="dark-icon-color" y="-25%" height="125%">
+		<filter id="dark-icon-color" y="-40%" height="140%">
 			<feFlood class="transition-all duration-300 flood-amber-700 dark:flood-slate-600" />
 			<feComposite operator="in" in2="SourceGraphic" />
 			<feOffset dy="-6" />
