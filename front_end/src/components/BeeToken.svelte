@@ -72,28 +72,12 @@
 		</filter>
 	</defs>
 	<circle cx="50%" cy="50%" r="27.5%" class={topClass} filter={sideFilter} />
-	{#if bee.species === 'drone'}
-		<image xlink:href="/drone.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else if bee.species === 'worker'}
-		<image xlink:href="/worker.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else if bee.species === 'nurse'}
-		<image xlink:href="/nurse.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else if bee.species === 'explorer'}
-		<image
-			xlink:href="/explorer.svg"
-			x="35%"
-			y="35%"
-			width="30%"
-			height="30%"
-			filter={iconFilter}
-		/>
-	{:else if bee.species === 'builder'}
-		<image xlink:href="/builder.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else if bee.species === 'guard'}
-		<image xlink:href="/guard.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else if bee.species === 'queen'}
-		<image xlink:href="/queen.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{:else}
-		<image xlink:href="/help.svg" x="35%" y="35%" width="30%" height="30%" filter={iconFilter} />
-	{/if}
+	<image
+		xlink:href="/{bee.species}.svg"
+		x="35%"
+		y="35%"
+		width="30%"
+		height="30%"
+		filter={iconFilter}
+	/>
 </svg>

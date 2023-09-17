@@ -61,7 +61,7 @@
 	</defs>
 	<circle class="fill-black group-hover:fill-white" cx="50%" cy="50%" r="50%" />
 	<image
-		xlink:href={`/${icon}.svg`}
+		xlink:href="/{icon}.svg"
 		class="group-hover:filter-none"
 		x="25%"
 		y="25%"
