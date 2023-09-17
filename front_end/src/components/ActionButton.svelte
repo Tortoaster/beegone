@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { yeet } from '../animation/yeet';
+	import { fly } from 'svelte/transition';
 	import type { Action, Piece } from '@beegone/beegone';
 
 	export let action: Action;
@@ -13,14 +13,14 @@
 	export let delay = 0;
 
 	$: inTransition = {
-		x: fromX - 180,
-		y: fromY - 180,
+		x: fromX - x,
+		y: fromY - y,
 		delay: (Math.atan2(y - fromY, x - fromX) + Math.PI) * 30 + delay,
 		duration: 200,
 	};
 	$: outTransition = {
-		x: x + (x - fromX) - 180,
-		y: y + (y - fromY) - 180,
+		x: x - fromX,
+		y: y - fromY,
 		duration: 200,
 	};
 	$: icon =
@@ -48,9 +48,9 @@
 	y={y - size / 2}
 	width={size}
 	height={size}
-	class="group cursor-pointer"
-	in:yeet|global={inTransition}
-	out:yeet|global={outTransition}
+	class="group cursor-pointer select-none"
+	in:fly|global={inTransition}
+	out:fly|global={outTransition}
 	on:click={dispatchAction}
 >
 	<defs>
