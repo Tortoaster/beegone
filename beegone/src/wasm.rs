@@ -38,8 +38,14 @@ extern "C" {
 }
 
 #[wasm_bindgen(js_name = "stateNew")]
-pub fn state_new() -> Result<JsState, JsValue> {
-    player::initialize(Player::Computer(Mutex::new(Rival::new())));
+pub fn state_new(players: u8) -> Result<JsState, JsValue> {
+    let player = match players {
+        1 => Player::Computer(Mutex::new(Rival::new())),
+        2 => Player::Local,
+        _ => panic!("unsupported number of players"),
+    };
+
+    player::initialize(player);
 
     let state = State::new();
 

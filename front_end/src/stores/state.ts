@@ -9,9 +9,9 @@ import {
 } from '@beegone/beegone';
 import type { Action, Pos } from '@beegone/beegone';
 
-function createState() {
+export function createState(players: number) {
 	const store = writable({
-		state: stateNew(),
+		state: stateNew(players),
 		positions: () => boardPositions(),
 	});
 
@@ -30,5 +30,3 @@ function createState() {
 		perform: async (action: Action) => await submitAction(action),
 	};
 }
-
-export const state = createState();
