@@ -34,13 +34,11 @@
 				result="Color"
 			/>
 			<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
-			<feOffset in="Shadow" dy="-2" result="Shadow2" />
-			<feOffset in="Shadow" dy="-4" result="Shadow4" />
+			<feOffset in="Shadow" dy="-3" result="Shadow3" />
 			<feOffset in="SourceGraphic" dy="-6" result="Offset" />
 			<feMerge>
 				<feMergeNode in="Shadow" />
-				<feMergeNode in="Shadow2" />
-				<feMergeNode in="Shadow4" />
+				<feMergeNode in="Shadow3" />
 				<feMergeNode in="Offset" />
 			</feMerge>
 		</filter>
@@ -50,13 +48,11 @@
 				result="Color"
 			/>
 			<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
-			<feOffset in="Shadow" dy="-2" result="Shadow2" />
-			<feOffset in="Shadow" dy="-4" result="Shadow4" />
+			<feOffset in="Shadow" dy="-3" result="Shadow3" />
 			<feOffset in="SourceGraphic" dy="-6" result="Offset" />
 			<feMerge>
 				<feMergeNode in="Shadow" />
-				<feMergeNode in="Shadow2" />
-				<feMergeNode in="Shadow4" />
+				<feMergeNode in="Shadow3" />
 				<feMergeNode in="Offset" />
 			</feMerge>
 		</filter>

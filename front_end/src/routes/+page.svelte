@@ -76,21 +76,20 @@
 			<filter id="wall-higher-filter" y="-25%" height="125%">
 				<feOffset dy="-8" />
 			</filter>
-			<filter id="wall-filter" y="-25%" height="125%">
+			<filter id="wall-filter" x="0%" y="-25%" width="100%" height="125%">
 				<feFlood
 					class="transition-all duration-300 flood-amber-600 dark:flood-slate-600"
 					result="Color"
 				/>
 				<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
-				<feOffset in="Shadow" dy="-2" result="Shadow2" />
-				<feOffset in="Shadow" dy="-4" result="Shadow4" />
-				<feOffset in="Shadow" dy="-6" result="Shadow6" />
 				<feOffset in="SourceGraphic" dy="-8" result="Offset" />
+				<feFlood class="transition-all duration-300 flood-amber-600 dark:flood-slate-600" />
+				<feOffset dy={TILE_RADIUS} result="Below" />
+				<feFlood height={PADDED_TILE_RADIUS + 4} result="Above" />
+				<feComposite operator="in" in="Below" in2="Above" result="Side" />
 				<feMerge>
 					<feMergeNode in="Shadow" />
-					<feMergeNode in="Shadow2" />
-					<feMergeNode in="Shadow4" />
-					<feMergeNode in="Shadow6" />
+					<feMergeNode in="Side" />
 					<feMergeNode in="Offset" />
 				</feMerge>
 			</filter>
