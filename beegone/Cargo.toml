@@ -9,6 +9,7 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+console_error_panic_hook = "0.1.7"
 js-sys = "0.3.64"
 rival = { git = "https://github.com/Tortoaster/rival.git", rev = "53247c9" }
 serde = { version = "1.0.183", features = ["derive"] }

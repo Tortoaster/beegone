@@ -39,6 +39,8 @@ extern "C" {
 
 #[wasm_bindgen(js_name = "stateNew")]
 pub fn state_new(players: u8) -> Result<JsState, JsValue> {
+    console_error_panic_hook::set_once();
+
     let player = match players {
         1 => Player::Computer(Mutex::new(Rival::new())),
         2 => Player::Local,
