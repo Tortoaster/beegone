@@ -20,19 +20,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install typeshare-cli
-        uses: actions-rs/install@v0.1.2
+      - name: Cache Docker layers
+        uses: actions/cache@v3
         with:
-          crate: typeshare-cli
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx- 
+
+      - name: Install typeshare-cli
+        uses: taiki-e/cache-cargo-install-action@v1.3.0
+        with:
+          tool: typeshare-cli
           version: "1.7.0"
 
       - name: Create types with typeshare
         run: typeshare -l typescript -o wasm/types.d.ts beegone
 
       - name: Install wasm-pack
-        uses: actions-rs/install@v0.1.2
+        uses: taiki-e/cache-cargo-install-action@v1.3.0
         with:
-          crate: wasm-pack
+          tool: wasm-pack
           version: "0.12.1"
 
       - name: Compile to WASM
@@ -65,3 +73,13 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
