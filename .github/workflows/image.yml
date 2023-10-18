@@ -32,7 +32,6 @@ jobs:
         uses: taiki-e/cache-cargo-install-action@v1.3.0
         with:
           tool: typeshare-cli
-          version: "1.7.0"
 
       - name: Create types with typeshare
         run: typeshare -l typescript -o wasm/types.d.ts beegone
@@ -41,7 +40,6 @@ jobs:
         uses: taiki-e/cache-cargo-install-action@v1.3.0
         with:
           tool: wasm-pack
-          version: "0.12.1"
 
       - name: Compile to WASM
         run: wasm-pack build --release --out-dir ../wasm --scope beegone beegone
