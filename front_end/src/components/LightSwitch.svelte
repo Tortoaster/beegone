@@ -31,6 +31,12 @@
 
 <button class="p-2" on:click={toggleTheme}>
 	<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em">
-		<image xlink:href="/theme.svg" width="100%" height="100%" />
+		<defs>
+			<filter id="icon-color">
+				<feFlood class="transition-all duration-300 flood-amber-700 dark:flood-slate-300" />
+				<feComposite operator="in" in2="SourceGraphic" />
+			</filter>
+		</defs>
+		<image xlink:href="/theme.svg" width="100%" height="100%" filter="url(#icon-color)" />
 	</svg>
 </button>

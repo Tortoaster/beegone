@@ -8,7 +8,7 @@ rustup target add wasm32-unknown-unknown
 
 cargo install typeshare-cli
 
-sudo npm install -g pnpm
+npm install -g pnpm
 pnpm install
 ```
 

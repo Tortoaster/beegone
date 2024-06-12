@@ -48,31 +48,47 @@
 </script>
 
 <div
-	class="transition-colors duration-300 bg-amber-500 dark:bg-slate-800 p-4 w-full h-full absolute block"
+	class="transition-colors duration-300 bg-amber-500 dark:bg-slate-800 p-4 size-full absolute"
 >
-	<div class="fixed top-0 right-0 m-4">
-		<LightSwitch />
-	</div>
 	{#if state === undefined}
-		<span
-			class="transition-colors duration-300 block w-full text-center text-3xl font-bold text-amber-700 dark:text-slate-300 mt-32"
-		>
-			vs.
-		</span><br />
-		<div class="flex justify-center content-center gap-4">
+		<div class="size-full height-full flex flex-col md:flex-row md:justify-center md:items-center gap-4">
 			<button
-				class="transition-colors duration-300 bg-amber-300 hover:bg-amber-200 dark:bg-slate-600 hover:dark:bg-slate-500 p-4 rounded-2xl w-1/6 h-1/3 text-5xl font-bold text-amber-700 dark:text-slate-300"
+				class="basis-1/2 md:max-w-96 md:max-h-80 flex flex-col justify-center items-center bg-amber-300 hover:bg-amber-200 dark:bg-slate-600 hover:dark:bg-slate-500 p-4 rounded-2xl"
 				on:click={() => (state = createState(2))}
 			>
-				Player
-			</button><button
-				class="transition-colors duration-300 bg-amber-300 hover:bg-amber-200 dark:bg-slate-600 hover:dark:bg-slate-500 p-4 rounded-2xl w-1/6 text-5xl font-bold text-amber-700 dark:text-slate-300"
+				<span class="text-3xl font-bold text-amber-500 dark:text-slate-500">vs.</span>
+				<svg xmlns="http://www.w3.org/2000/svg" width="5em" height="8em">
+					<defs>
+						<filter id="icon-color">
+							<feFlood class="transition-all duration-300 flood-amber-900 dark:flood-slate-100" />
+							<feComposite operator="in" in2="SourceGraphic" />
+						</filter>
+					</defs>
+					<image xlink:href="/player.svg" width="100%" height="100%" filter="url(#icon-color)" />
+				</svg>
+				<span class="text-5xl font-bold text-amber-700 dark:text-slate-300">Player</span>
+			</button>
+			<button
+				class="basis-1/2 md:max-w-96 md:max-h-80 flex flex-col justify-center items-center bg-amber-300 hover:bg-amber-200 dark:bg-slate-600 hover:dark:bg-slate-500 p-4 rounded-2xl"
 				on:click={() => (state = createState(1))}
 			>
-				Computer
+				<span class="text-3xl font-bold text-amber-500 dark:text-slate-500">vs.</span>
+				<svg xmlns="http://www.w3.org/2000/svg" width="8em" height="8em">
+					<defs>
+						<filter id="icon-color">
+							<feFlood class="transition-all duration-300 flood-amber-900 dark:flood-slate-100" />
+							<feComposite operator="in" in2="SourceGraphic" />
+						</filter>
+					</defs>
+					<image xlink:href="/robot.svg" width="100%" height="100%" filter="url(#icon-color)" />
+				</svg>
+				<span class="text-5xl font-bold text-amber-700 dark:text-slate-300">Computer</span>
 			</button>
 		</div>
 	{:else}
+		<div class="fixed top-0 right-0 m-4">
+			<LightSwitch />
+		</div>
 		<svg
 			viewBox="{-VIEW_BOX / 2} {-VIEW_BOX / 2} {VIEW_BOX} {VIEW_BOX}"
 			xmlns="http://www.w3.org/2000/svg"
