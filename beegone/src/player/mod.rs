@@ -38,7 +38,7 @@ pub async fn progress(state: &mut State) -> Result<(), &'static str> {
 pub enum Player {
     #[default]
     Local,
-    Computer(Mutex<Rival<State, Negamax, 2>>),
+    Computer(Mutex<Rival<State, Negamax, 2, { 8192 * 2 }>>),
 }
 
 impl Player {
@@ -46,7 +46,7 @@ impl Player {
     pub async fn get_action(&self, state: &mut State) -> Action {
         match self {
             Player::Local => local::retrieve_action().await,
-            Player::Computer(rival) => rival.lock().unwrap().get_best(state, 5).unwrap(),
+            Player::Computer(rival) => rival.lock().unwrap().get_best(state, 4).unwrap(),
         }
     }
 }

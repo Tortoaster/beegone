@@ -1,4 +1,4 @@
-use rival::{EvaluateZeroSum, Moves, PlayClone, Value};
+use rival::{CloneCacheKey, EvaluateZeroSum, LazyZobristHash, Moves, PlayClone, Value};
 
 use crate::{Action, Bee, Color, Species, State};
 
@@ -31,6 +31,10 @@ impl EvaluateZeroSum for State {
             .sum()
     }
 }
+
+impl LazyZobristHash for State {}
+
+impl CloneCacheKey for State {}
 
 impl Species {
     fn value(&self) -> Value {
