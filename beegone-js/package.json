@@ -1,0 +1,5 @@
+{
+  "name": "beegone",
+  "type": "commonjs",
+  "main": "src/beegone.js"
+}

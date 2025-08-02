@@ -1,6 +1,0 @@
-/target
-/front_end/src/beegone
-
-node_modules
-build
-.svelte-kit

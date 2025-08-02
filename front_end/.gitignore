@@ -1,6 +1,4 @@
-/target
-/wasm
+/src/beegone
 
 node_modules
-build
 .svelte-kit
