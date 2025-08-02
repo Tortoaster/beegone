@@ -6,8 +6,8 @@ import {
 	stateNew,
 	stateProgress,
 	submitAction,
-} from '@beegone/beegone';
-import type { Action, Pos } from '@beegone/beegone';
+} from '../beegone/beegone';
+import type { Action, Pos } from '../beegone/types';
 
 export function createState(players: number) {
 	const store = writable({

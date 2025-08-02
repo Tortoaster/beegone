@@ -61,13 +61,9 @@ To further limit how long the game takes, you can pretend that a queen may only 
 ### Install dependencies
 
 ```shell
-cargo install wasm-pack
+cargo install typeshare-cli wasm-bindgen-cli
 rustup target add wasm32-unknown-unknown
-
-cargo install typeshare-cli
-
-npm install -g pnpm
-pnpm install
+corepack enable
 ```
 
 ### Build WASM
@@ -75,9 +71,11 @@ pnpm install
 Repeat these commands every time the `beegone` library changes:
 
 ```shell
-typeshare -l typescript -o wasm/types.d.ts beegone
-
-wasm-pack build --release --out-dir ../wasm --scope beegone beegone
+typeshare -l typescript -o front_end/src/beegone/types.d.ts beegone
+cargo build --release --target wasm32-unknown-unknown
+wasm-bindgen --browser --out-dir front_end/src/beegone target/wasm32-unknown-unknown/release/beegone.wasm
+bin/wasm-opt front_end/src/beegone/beegone_bg.wasm -o front_end/src/beegone/beegone_bg.wasm --all-features -O2
+pnpm i
 ```
 
 ### Run

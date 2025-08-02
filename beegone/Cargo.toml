@@ -10,11 +10,11 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
-js-sys = "0.3.64"
+js-sys = "0.3.77"
 rival = { git = "https://github.com/Tortoaster/rival.git", rev = "e26c120" }
 serde = { version = "1.0.183", features = ["derive"] }
 serde-wasm-bindgen = "0.5.0"
 tokio = { version = "1.32.0", features = ["time"] }
 typeshare = "1.0.1"
-wasm-bindgen = "0.2.87"
+wasm-bindgen = "0.2.100"
 wasm-bindgen-futures = "0.4.37"

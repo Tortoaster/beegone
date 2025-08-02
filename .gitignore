@@ -1,5 +1,5 @@
 /target
-/wasm
+/front_end/src/beegone
 
 node_modules
 build
