@@ -1,5 +1,6 @@
 {
   "name": "beegone",
-  "type": "commonjs",
-  "main": "src/beegone.js"
+  "type": "module",
+  "main": "src/beegone.js",
+  "types": "src/beegone.d.ts"
 }
