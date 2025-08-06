@@ -1,28 +1,24 @@
-use serde::{Deserialize, Serialize};
-use typeshare::typeshare;
-
 use crate::{
-    action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
-    board::Board,
-    id::IdExt,
-    iter::IteratorExt,
-    piece::{Color, Piece},
-    pos::{Pos, Shift},
+    domain::{
+        action::{Action, Actions, MoveAction, SpawnAction, SpecialActions},
+        board::Board,
+        piece::{Color, Piece},
+        pos::{Pos, Shift},
+    },
     Bee, Species,
 };
 
-#[typeshare]
-#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct State {
     board: Board,
     turn: Color,
 }
 
 impl State {
-    pub fn new() -> Self {
-        State {
-            board: Board::default(),
-            turn: Color::default(),
+    pub fn new(board: Board, turn: Color) -> Self {
+        Self {
+            board,
+            turn,
         }
     }
 
@@ -36,7 +32,7 @@ impl State {
             Some(piece) => piece,
         };
 
-        let bee = match *piece {
+        let bee = match piece {
             Piece::Bee(bee) => bee,
             Piece::Wall => return Actions::None,
         };
@@ -48,7 +44,7 @@ impl State {
         // All bees can move to empty adjacent tiles
         let steps = from
             .adjacent()
-            .within_bounds()
+            .filter(|&p| Board::within_bounds(p))
             .filter(move |pos| self.board.get(pos).is_none())
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
 
@@ -63,7 +59,7 @@ impl State {
                     .unwrap_or_default()
             })
             .map(move |shift| from + shift * 2)
-            .within_bounds()
+            .filter(|&p| Board::within_bounds(p))
             .filter(move |pos| match self.board.get(pos) {
                 None => true,
                 Some(other) => piece.can_capture(&other),
@@ -92,7 +88,7 @@ impl State {
                     .filter(move |adj| {
                         self.board
                             .get(adj)
-                            .map(|piece| match *piece {
+                            .map(|piece| match piece {
                                 Piece::Bee(adj) => {
                                     adj.color() == bee.color() && adj.species() == Species::Worker
                                 }
@@ -106,7 +102,7 @@ impl State {
                             .map(move |species| {
                                 Action::Spawn(SpawnAction::new(
                                     adj,
-                                    Piece::Bee(Bee::new(bee.color(), species)).with_id(),
+                                    Piece::Bee(Bee::new(bee.color(), species)),
                                 ))
                             })
                     }),
@@ -139,21 +135,21 @@ impl State {
             // Builders can spawn walls on empty adjacent tiles
             Species::Builder => SpecialActions::Builder(Box::new(
                 from.adjacent()
-                    .within_bounds()
+                    .filter(|&p| Board::within_bounds(p))
                     .filter(move |adj| self.board.get(adj).is_none())
-                    .map(|adj| Action::Spawn(SpawnAction::new(adj, Piece::Wall.with_id()))),
+                    .map(|adj| Action::Spawn(SpawnAction::new(adj, Piece::Wall))),
             )),
             // Queens can spawn drones on empty adjacent tiles, and if a drone is
             // already adjacent to the queen, she can spawn workers as well
             Species::Queen => {
                 let drones = from
                     .adjacent()
-                    .within_bounds()
+                    .filter(|&p| Board::within_bounds(p))
                     .filter(move |adj| self.board.get(adj).is_none())
                     .map(move |adj| {
                         Action::Spawn(SpawnAction::new(
                             adj,
-                            Piece::Bee(Bee::new(bee.color(), Species::Drone)).with_id(),
+                            Piece::Bee(Bee::new(bee.color(), Species::Drone)),
                         ))
                     });
 
@@ -169,12 +165,12 @@ impl State {
                 let workers = if fertilized {
                     Box::new(
                         from.adjacent()
-                            .within_bounds()
+                            .filter(|&p| Board::within_bounds(p))
                             .filter(move |adj| self.board.get(adj).is_none())
                             .map(move |adj| {
                                 Action::Spawn(SpawnAction::new(
                                     adj,
-                                    Piece::Bee(Bee::new(bee.color(), Species::Worker)).with_id(),
+                                    Piece::Bee(Bee::new(bee.color(), Species::Worker)),
                                 ))
                             }),
                     )

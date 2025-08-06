@@ -71,7 +71,7 @@ tired, and nurses may only promote 15 pieces in total. Stalemates may happen, I 
 ### Install dependencies
 
 ```shell
-cargo install --locked just typeshare-cli wasm-bindgen-cli
+cargo install --locked just wasm-bindgen-cli
 rustup target add wasm32-unknown-unknown
 ```
 

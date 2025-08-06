@@ -1,7 +1,6 @@
 <script lang="ts">
 	import BeeComponent from '$lib/components/BeeComponent.svelte';
-	import type { Action } from 'beegone'
-	import { Color, Species } from 'beegone/src/types';
+	import { Color, Species } from 'beegone'
 
 	const VIEW_BOX = 360;
 </script>

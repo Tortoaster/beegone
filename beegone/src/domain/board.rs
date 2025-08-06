@@ -1,19 +1,10 @@
 use std::collections::BTreeMap;
 
-use serde::{Deserialize, Serialize};
-use typeshare::typeshare;
+use crate::domain::{piece::Piece, pos::Pos};
 
-use crate::{
-    id::{IdExt, WithId},
-    piece::Piece,
-    pos::Pos,
-};
-
-#[typeshare]
-#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Board {
-    #[typeshare(skip)]
-    pieces: BTreeMap<Pos, WithId<Piece>>,
+    pieces: BTreeMap<Pos, Piece>,
 }
 
 impl Board {
@@ -85,40 +76,44 @@ impl Board {
     pub fn new() -> Self {
         let mut pieces = BTreeMap::new();
 
-        pieces.insert(Self::D2, Piece::DARK_QUEEN.with_id());
-        pieces.insert(Self::D1, Piece::DARK_DRONE.with_id());
-        pieces.insert(Self::B3, Piece::DARK_NURSE.with_id());
-        pieces.insert(Self::F1, Piece::DARK_NURSE.with_id());
+        pieces.insert(Self::D2, Piece::DARK_QUEEN);
+        pieces.insert(Self::D1, Piece::DARK_DRONE);
+        pieces.insert(Self::B3, Piece::DARK_NURSE);
+        pieces.insert(Self::F1, Piece::DARK_NURSE);
 
-        pieces.insert(Self::D6, Piece::LIGHT_QUEEN.with_id());
-        pieces.insert(Self::D7, Piece::LIGHT_DRONE.with_id());
-        pieces.insert(Self::B7, Piece::LIGHT_NURSE.with_id());
-        pieces.insert(Self::F5, Piece::LIGHT_NURSE.with_id());
+        pieces.insert(Self::D6, Piece::LIGHT_QUEEN);
+        pieces.insert(Self::D7, Piece::LIGHT_DRONE);
+        pieces.insert(Self::B7, Piece::LIGHT_NURSE);
+        pieces.insert(Self::F5, Piece::LIGHT_NURSE);
 
-        pieces.insert(Self::A5, Piece::Wall.with_id());
-        pieces.insert(Self::A6, Piece::Wall.with_id());
-        pieces.insert(Self::B5, Piece::Wall.with_id());
-        pieces.insert(Self::C4, Piece::Wall.with_id());
-        pieces.insert(Self::C5, Piece::Wall.with_id());
-        pieces.insert(Self::D4, Piece::Wall.with_id());
-        pieces.insert(Self::E3, Piece::Wall.with_id());
-        pieces.insert(Self::E4, Piece::Wall.with_id());
-        pieces.insert(Self::F3, Piece::Wall.with_id());
-        pieces.insert(Self::G2, Piece::Wall.with_id());
-        pieces.insert(Self::G3, Piece::Wall.with_id());
+        pieces.insert(Self::A5, Piece::Wall);
+        pieces.insert(Self::A6, Piece::Wall);
+        pieces.insert(Self::B5, Piece::Wall);
+        pieces.insert(Self::C4, Piece::Wall);
+        pieces.insert(Self::C5, Piece::Wall);
+        pieces.insert(Self::D4, Piece::Wall);
+        pieces.insert(Self::E3, Piece::Wall);
+        pieces.insert(Self::E4, Piece::Wall);
+        pieces.insert(Self::F3, Piece::Wall);
+        pieces.insert(Self::G2, Piece::Wall);
+        pieces.insert(Self::G3, Piece::Wall);
 
-        Board { pieces }
+        Self::new_with_pieces(pieces)
+    }
+
+    pub fn new_with_pieces(pieces: BTreeMap<Pos, Piece>) -> Self {
+        Self { pieces }
     }
 
     pub fn within_bounds(pos: Pos) -> bool {
         (pos - Self::CENTER).distance() <= Self::RADIUS as i32
     }
 
-    pub fn get(&self, pos: &Pos) -> Option<WithId<Piece>> {
+    pub fn get(&self, pos: &Pos) -> Option<Piece> {
         self.pieces.get(pos).copied()
     }
 
-    pub fn set(&mut self, pos: Pos, piece: Option<WithId<Piece>>) {
+    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) {
         match piece {
             None => {
                 self.pieces.remove(&pos);
@@ -136,7 +131,7 @@ impl Board {
         Self::POSITIONS.into_iter()
     }
 
-    pub fn pieces(&self) -> &BTreeMap<Pos, WithId<Piece>> {
+    pub fn pieces(&self) -> &BTreeMap<Pos, Piece> {
         &self.pieces
     }
 }

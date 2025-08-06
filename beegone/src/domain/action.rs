@@ -1,18 +1,14 @@
-use serde::{Deserialize, Serialize};
-use typeshare::typeshare;
+use wasm_bindgen::prelude::wasm_bindgen;
+use crate::domain::{piece::Piece, pos::Pos};
 
-use crate::{id::WithId, piece::Piece, pos::Pos};
-
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase", tag = "type", content = "content")]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub enum Action {
     Move(MoveAction),
     Spawn(SpawnAction),
 }
 
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MoveAction {
     from: Pos,
     to: Pos,
@@ -32,15 +28,15 @@ impl MoveAction {
     }
 }
 
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct SpawnAction {
     on: Pos,
-    spawn: WithId<Piece>,
+    spawn: Piece,
 }
 
 impl SpawnAction {
-    pub fn new(on: Pos, spawn: WithId<Piece>) -> Self {
+    pub fn new(on: Pos, spawn: Piece) -> Self {
         SpawnAction { on, spawn }
     }
 
@@ -48,7 +44,7 @@ impl SpawnAction {
         self.on
     }
 
-    pub fn spawn(self) -> WithId<Piece> {
+    pub fn spawn(self) -> Piece {
         self.spawn
     }
 }

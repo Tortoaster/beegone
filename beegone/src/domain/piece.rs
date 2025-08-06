@@ -1,13 +1,8 @@
 use std::ops::Not;
+use wasm_bindgen::prelude::wasm_bindgen;
 
-use serde::{Deserialize, Serialize};
-use typeshare::typeshare;
-
-#[typeshare]
-#[derive(
-    Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
-)]
-#[serde(rename_all = "camelCase")]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Color {
     #[default]
     Light,
@@ -25,9 +20,8 @@ impl Not for Color {
     }
 }
 
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Species {
     Drone,
     Worker,
@@ -38,8 +32,8 @@ pub enum Species {
     Queen,
 }
 
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Bee {
     color: Color,
     species: Species,
@@ -77,9 +71,7 @@ impl Piece {
     pub const LIGHT_QUEEN: Piece = Piece::Bee(Bee::new(Color::Light, Species::Queen));
 }
 
-#[typeshare]
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase", tag = "type", content = "content")]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Piece {
     Bee(Bee),
     Wall,

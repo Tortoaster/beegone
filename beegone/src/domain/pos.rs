@@ -1,12 +1,8 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use wasm_bindgen::prelude::wasm_bindgen;
 
-use serde::{Deserialize, Serialize};
-use typeshare::typeshare;
-
-#[typeshare]
-#[derive(
-    Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
-)]
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Pos {
     pub q: i32,
     pub r: i32,

@@ -1,15 +1,10 @@
-pub use action::Action;
-pub use board::Board;
-pub use piece::{Bee, Color, Piece, Species};
-pub use pos::Pos;
-pub use state::State;
+pub use domain::action::Action;
+pub use domain::board::Board;
+pub use domain::piece::{Bee, Color, Piece, Species};
+pub use domain::pos::Pos;
+pub use domain::state::State;
 
-mod action;
-mod board;
-mod id;
-mod iter;
-mod piece;
 mod player;
-mod pos;
-mod state;
-mod wasm;
+mod domain;
+mod outbound;
+mod inbound;
