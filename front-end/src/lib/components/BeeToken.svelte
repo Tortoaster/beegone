@@ -12,8 +12,8 @@
 
 	$: topClass =
 		bee.color === Color.Light
-			? 'transition-colors duration-300 fill-amber-300 dark:fill-slate-100'
-			: 'transition-colors duration-300 fill-amber-900  dark:fill-slate-800';
+			? 'fill-amber-300'
+			: 'fill-amber-900 ';
 	$: sideFilter = bee.color === Color.Light ? 'url(#light-token-side)' : 'url(#dark-token-side)';
 	$: iconFilter = bee.color === Color.Light ? 'url(#light-icon-color)' : 'url(#dark-icon-color)';
 </script>
@@ -31,7 +31,7 @@
 	<defs>
 		<filter id="light-token-side" y="-25%" height="125%">
 			<feFlood
-				class="transition-all duration-300 flood-amber-400 dark:flood-slate-300"
+				class="flood-amber-400"
 				result="Color"
 			/>
 			<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
@@ -45,7 +45,7 @@
 		</filter>
 		<filter id="dark-token-side" y="-25%" height="125%">
 			<feFlood
-				class="transition-all duration-300 flood-amber-950 dark:flood-slate-900"
+				class="flood-amber-950"
 				result="Color"
 			/>
 			<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
@@ -58,12 +58,12 @@
 			</feMerge>
 		</filter>
 		<filter id="light-icon-color" y="-40%" height="140%">
-			<feFlood class="transition-all duration-300 flood-amber-500 dark:flood-slate-400" />
+			<feFlood class="flood-amber-500" />
 			<feComposite operator="in" in2="SourceGraphic" />
 			<feOffset dy="-6" />
 		</filter>
 		<filter id="dark-icon-color" y="-40%" height="140%">
-			<feFlood class="transition-all duration-300 flood-amber-700 dark:flood-slate-600" />
+			<feFlood class="flood-amber-700" />
 			<feComposite operator="in" in2="SourceGraphic" />
 			<feOffset dy="-6" />
 		</filter>

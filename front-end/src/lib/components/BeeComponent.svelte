@@ -16,8 +16,8 @@
 
   const topClass = $derived(
     bee.color === Color.Light
-      ? "transition-colors duration-300 fill-amber-300 dark:fill-slate-100"
-      : "transition-colors duration-300 fill-amber-900  dark:fill-slate-800",
+      ? "fill-amber-300"
+      : "fill-amber-900 ",
   );
   const sideFilter = $derived(
     bee.color === Color.Light

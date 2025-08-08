@@ -2,7 +2,6 @@
 	import { Board, type Pos, State } from 'beegone';
 	import ActionButtonGroup from '$lib/components/ActionButtonGroup.svelte';
 	import BeeToken from '$lib/components/BeeToken.svelte';
-	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import Polygon from '$lib/components/Polygon.svelte';
 
 	const VIEW_BOX = 360;
@@ -41,11 +40,8 @@
 </script>
 
 <div
-	class="transition-colors duration-300 bg-amber-500 dark:bg-slate-800 p-4 size-full absolute"
+	class="bg-amber-500 p-4 size-full absolute"
 >
-	<div class="fixed top-0 right-0 m-4">
-		<LightSwitch />
-	</div>
 	<svg
 		viewBox="{-VIEW_BOX / 2} {-VIEW_BOX / 2} {VIEW_BOX} {VIEW_BOX}"
 		xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +56,7 @@
 				<feOffset dy="4" result="Offset" />
 				<feComposite operator="out" in="SourceGraphic" in2="Offset" result="Side" />
 				<feFlood
-					class="transition-all duration-300 flood-amber-600 dark:flood-slate-600"
+					class="flood-amber-600"
 					result="Shadow"
 				/>
 				<feComposite operator="in" in="Shadow" in2="Side" result="Side" />
@@ -74,12 +70,12 @@
 			</filter>
 			<filter id="wall-filter" x="0%" y="-25%" width="100%" height="125%">
 				<feFlood
-					class="transition-all duration-300 flood-amber-600 dark:flood-slate-600"
+					class="flood-amber-600"
 					result="Color"
 				/>
 				<feComposite operator="in" in="Color" in2="SourceGraphic" result="Shadow" />
 				<feOffset in="SourceGraphic" dy="-8" result="Offset" />
-				<feFlood class="transition-all duration-300 flood-amber-600 dark:flood-slate-600" />
+				<feFlood class="flood-amber-600" />
 				<feOffset dy={TILE_RADIUS} result="Below" />
 				<feFlood height={PADDED_TILE_RADIUS + 6} result="Above" />
 				<feComposite operator="in" in="Below" in2="Above" result="Side" />
@@ -92,7 +88,7 @@
 		</defs>
 		{#each Board.positions() as pos}
 			<Polygon
-				class="transition-colors duration-300 fill-amber-700 dark:fill-slate-500"
+				class="fill-amber-700"
 				cx={PADDED_TILE_RADIUS * pos.x}
 				cy={PADDED_TILE_RADIUS * pos.y}
 				r={TILE_RADIUS}
@@ -101,7 +97,7 @@
 				filter="url(#tile-filter)"
 			/>
 			<Polygon
-				class="transition-colors duration-300 fill-amber-800 dark:fill-slate-600"
+				class="fill-amber-800"
 				cx={PADDED_TILE_RADIUS * pos.x}
 				cy={PADDED_TILE_RADIUS * pos.y}
 				r={TILE_RADIUS * 0.75}
@@ -123,7 +119,7 @@
 					/>
 				{:else}
 					<Polygon
-						class="transition-colors duration-300 fill-amber-400 dark:fill-slate-400"
+						class="fill-amber-400"
 						cx={PADDED_TILE_RADIUS * pos.x}
 						cy={PADDED_TILE_RADIUS * pos.y}
 						r={TILE_RADIUS}
@@ -132,7 +128,7 @@
 						filter="url(#wall-filter)"
 					/>
 					<Polygon
-						class="transition-colors duration-300 fill-amber-300 dark:fill-slate-300"
+						class="fill-amber-300"
 						cx={PADDED_TILE_RADIUS * pos.x}
 						cy={PADDED_TILE_RADIUS * pos.y}
 						r={TILE_RADIUS * 0.75}
