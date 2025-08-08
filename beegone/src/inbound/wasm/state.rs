@@ -1,9 +1,10 @@
-use thiserror::Error;
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{Color, Pos, State};
-use crate::inbound::wasm::board::WasmBoard;
-use crate::inbound::wasm::action::WasmAction;
+use crate::{
+    inbound::wasm::{action::WasmAction, board::WasmBoard, color::WasmColor, error::PerformError},
+    Action, Pos, State,
+};
+use crate::inbound::wasm::error::InvalidBee;
 
 #[wasm_bindgen(js_name = "State")]
 #[derive(Clone)]
@@ -11,7 +12,7 @@ pub struct WasmState {
     #[wasm_bindgen(readonly, getter_with_clone)]
     pub board: WasmBoard,
     #[wasm_bindgen(readonly)]
-    pub turn: Color,
+    pub turn: WasmColor,
 }
 
 #[wasm_bindgen(js_class = "State")]
@@ -22,17 +23,20 @@ impl WasmState {
     }
 
     #[wasm_bindgen(js_name = "actionsFrom")]
-    pub fn actions_from(&self, pos: &Pos) -> Vec<WasmAction> {
-        State::from(self.clone())
+    pub fn actions_from(&self, pos: &Pos) -> Result<Vec<WasmAction>, InvalidBee> {
+        Ok(State::try_from(self.clone())?
             .actions_from(*pos)
             .map(Into::into)
-            .collect()
+            .collect())
     }
 
     #[wasm_bindgen]
-    pub fn perform(&mut self, action: &WasmAction) -> Result<WasmState, WasmInvalidAction> {
-        let mut state = State::from(self.clone());
-        state.perform((*action).into()).map_err(|_| WasmInvalidAction)?;
+    pub fn perform(&mut self, action: &WasmAction) -> Result<WasmState, PerformError> {
+        let mut state: State = self.clone().try_into()?;
+        let action: Action = (*action).try_into()?;
+        state
+            .perform(action)
+            .map_err(|_| PerformError::InvalidAction)?;
         Ok(state.into())
     }
 }
@@ -41,18 +45,15 @@ impl From<State> for WasmState {
     fn from(value: State) -> Self {
         Self {
             board: value.board().clone().into(),
-            turn: value.turn(),
+            turn: value.turn().into(),
         }
     }
 }
 
-impl From<WasmState> for State {
-    fn from(value: WasmState) -> Self {
-        State::new(value.board.into(), value.turn)
+impl TryFrom<WasmState> for State {
+    type Error = InvalidBee;
+
+    fn try_from(value: WasmState) -> Result<Self, InvalidBee> {
+        Ok(State::new(value.board.try_into()?, value.turn.try_into()?))
     }
 }
-
-#[wasm_bindgen(js_name = "InvalidAction")]
-#[derive(Debug, Error)]
-#[error("invalid action")]
-pub struct WasmInvalidAction;

@@ -2,7 +2,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import type { Action, Piece } from 'beegone';
-	import { speciesName } from '$lib/species-name';
 
 	export let action: Action;
 	export let x = 0;
@@ -32,7 +31,7 @@
 				? 'attack'
 				: 'dig'
 			: action.spawn?.spawn.bee
-			? speciesName(action.spawn?.spawn.bee.species)
+			? action.spawn?.spawn.bee.species
 			: 'build';
 
 	const dispatch = createEventDispatcher();

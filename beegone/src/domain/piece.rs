@@ -1,8 +1,5 @@
 use std::ops::Not;
 
-use wasm_bindgen::prelude::wasm_bindgen;
-
-#[wasm_bindgen]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Color {
     #[default]
@@ -21,7 +18,6 @@ impl Not for Color {
     }
 }
 
-#[wasm_bindgen]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Species {
     Drone,

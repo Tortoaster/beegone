@@ -2,8 +2,10 @@ use std::collections::BTreeMap;
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{Board, Pos};
-use crate::inbound::wasm::piece::WasmPiece;
+use crate::{
+    inbound::wasm::{error::InvalidBee, piece::WasmPiece},
+    Board, Pos,
+};
 
 #[wasm_bindgen(js_name = "Board")]
 #[derive(Clone)]
@@ -34,14 +36,16 @@ impl From<Board> for WasmBoard {
     }
 }
 
-impl From<WasmBoard> for Board {
-    fn from(value: WasmBoard) -> Self {
-        Board::new_with_pieces(
+impl TryFrom<WasmBoard> for Board {
+    type Error = InvalidBee;
+
+    fn try_from(value: WasmBoard) -> Result<Self, Self::Error> {
+        Ok(Board::new_with_pieces(
             value
                 .pieces
                 .into_iter()
-                .map(|(k, v)| (k, v.into()))
-                .collect(),
-        )
+                .map(|(k, v)| Ok((k, v.try_into()?)))
+                .collect::<Result<_, InvalidBee>>()?,
+        ))
     }
 }

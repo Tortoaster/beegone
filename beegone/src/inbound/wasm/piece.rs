@@ -1,7 +1,9 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::Piece;
-use crate::inbound::wasm::bee::WasmBee;
+use crate::{
+    inbound::wasm::{bee::WasmBee, error::InvalidBee},
+    Piece,
+};
 
 #[wasm_bindgen(js_name = "Piece")]
 #[derive(Copy, Clone)]
@@ -22,11 +24,13 @@ impl From<Piece> for WasmPiece {
     }
 }
 
-impl From<WasmPiece> for Piece {
-    fn from(value: WasmPiece) -> Self {
+impl TryFrom<WasmPiece> for Piece {
+    type Error = InvalidBee;
+
+    fn try_from(value: WasmPiece) -> Result<Self, Self::Error> {
         match value.bee {
-            None => Piece::Wall,
-            Some(bee) => Piece::Bee(bee.into()),
+            None => Ok(Piece::Wall),
+            Some(bee) => Ok(Piece::Bee(bee.try_into()?)),
         }
     }
 }

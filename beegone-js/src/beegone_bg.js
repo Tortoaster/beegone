@@ -56,22 +56,22 @@ function takeFromExternrefTable0(idx) {
 /**
  * @enum {0 | 1}
  */
-export const Color = Object.freeze({
-    Light: 0, "0": "Light",
-    Dark: 1, "1": "Dark",
+export const InvalidBee = Object.freeze({
+    InvalidColor: 0, "0": "InvalidColor",
+    InvalidSpecies: 1, "1": "InvalidSpecies",
 });
 /**
- * @enum {0 | 1 | 2 | 3 | 4 | 5 | 6}
+ * @enum {0 | 1 | 2}
  */
-export const Species = Object.freeze({
-    Drone: 0, "0": "Drone",
-    Worker: 1, "1": "Worker",
-    Nurse: 2, "2": "Nurse",
-    Builder: 3, "3": "Builder",
-    Explorer: 4, "4": "Explorer",
-    Guard: 5, "5": "Guard",
-    Queen: 6, "6": "Queen",
+export const PerformError = Object.freeze({
+    InvalidColor: 0, "0": "InvalidColor",
+    InvalidSpecies: 1, "1": "InvalidSpecies",
+    InvalidAction: 2, "2": "InvalidAction",
 });
+
+const __wbindgen_enum_Color = ["light", "dark"];
+
+const __wbindgen_enum_Species = ["drone", "worker", "nurse", "builder", "explorer", "guard", "queen"];
 
 const ActionFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
@@ -166,21 +166,21 @@ export class Bee {
      */
     get color() {
         const ret = wasm.__wbg_get_bee_color(this.__wbg_ptr);
-        return ret;
+        return __wbindgen_enum_Color[ret];
     }
     /**
      * @returns {Species}
      */
     get species() {
         const ret = wasm.__wbg_get_bee_species(this.__wbg_ptr);
-        return ret;
+        return __wbindgen_enum_Species[ret];
     }
     /**
      * @param {Color} color
      * @param {Species} species
      */
     constructor(color, species) {
-        const ret = wasm.bee_new(color, species);
+        const ret = wasm.bee_new((__wbindgen_enum_Color.indexOf(color) + 1 || 3) - 1, (__wbindgen_enum_Species.indexOf(species) + 1 || 8) - 1);
         this.__wbg_ptr = ret >>> 0;
         BeeFinalization.register(this, this.__wbg_ptr, this);
         return this;
@@ -232,30 +232,41 @@ export class Board {
     }
 }
 
-const InvalidActionFinalization = (typeof FinalizationRegistry === 'undefined')
+const InvalidColorFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_invalidaction_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_invalidcolor_free(ptr >>> 0, 1));
 
-export class InvalidAction {
-
-    static __wrap(ptr) {
-        ptr = ptr >>> 0;
-        const obj = Object.create(InvalidAction.prototype);
-        obj.__wbg_ptr = ptr;
-        InvalidActionFinalization.register(obj, obj.__wbg_ptr, obj);
-        return obj;
-    }
+export class InvalidColor {
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
-        InvalidActionFinalization.unregister(this);
+        InvalidColorFinalization.unregister(this);
         return ptr;
     }
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_invalidaction_free(ptr, 0);
+        wasm.__wbg_invalidcolor_free(ptr, 0);
+    }
+}
+
+const InvalidSpeciesFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_invalidspecies_free(ptr >>> 0, 1));
+
+export class InvalidSpecies {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        InvalidSpeciesFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_invalidspecies_free(ptr, 0);
     }
 }
 
@@ -402,8 +413,8 @@ export class State {
      * @returns {Color}
      */
     get turn() {
-        const ret = wasm.__wbg_get_state_turn(this.__wbg_ptr);
-        return ret;
+        const ret = wasm.__wbg_get_bee_color(this.__wbg_ptr);
+        return __wbindgen_enum_Color[ret];
     }
     constructor() {
         const ret = wasm.state_new();
@@ -418,6 +429,9 @@ export class State {
     actionsFrom(pos) {
         _assertClass(pos, Pos);
         const ret = wasm.state_actionsFrom(this.__wbg_ptr, pos.__wbg_ptr);
+        if (ret[3]) {
+            throw takeFromExternrefTable0(ret[2]);
+        }
         var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
         wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
         return v1;
@@ -506,7 +520,7 @@ export class WasmSpawnAction {
      * @returns {Pos}
      */
     get on() {
-        const ret = wasm.__wbg_get_wasmmoveaction_from(this.__wbg_ptr);
+        const ret = wasm.__wbg_get_wasmmoveaction_to(this.__wbg_ptr);
         return Pos.__wrap(ret);
     }
     /**
@@ -520,11 +534,6 @@ export class WasmSpawnAction {
 
 export function __wbg_action_new(arg0) {
     const ret = Action.__wrap(arg0);
-    return ret;
-};
-
-export function __wbg_invalidaction_new(arg0) {
-    const ret = InvalidAction.__wrap(arg0);
     return ret;
 };
 
@@ -542,6 +551,11 @@ export function __wbindgen_init_externref_table() {
     table.set(offset + 2, true);
     table.set(offset + 3, false);
     ;
+};
+
+export function __wbindgen_number_new(arg0) {
+    const ret = arg0;
+    return ret;
 };
 
 export function __wbindgen_throw(arg0, arg1) {

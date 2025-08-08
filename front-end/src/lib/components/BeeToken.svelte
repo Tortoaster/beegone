@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { type Bee, Color, Species } from 'beegone';
-	import { speciesName } from '$lib/species-name';
+	import { type Bee } from 'beegone';
 
 	export let bee: Bee;
 
@@ -11,11 +10,11 @@
 	export let height: number | string = '100%';
 
 	$: topClass =
-		bee.color === Color.Light
+		bee.color === 'light'
 			? 'fill-amber-300'
 			: 'fill-amber-900 ';
-	$: sideFilter = bee.color === Color.Light ? 'url(#light-token-side)' : 'url(#dark-token-side)';
-	$: iconFilter = bee.color === Color.Light ? 'url(#light-icon-color)' : 'url(#dark-icon-color)';
+	$: sideFilter = bee.color === 'light' ? 'url(#light-token-side)' : 'url(#dark-token-side)';
+	$: iconFilter = bee.color === 'light' ? 'url(#light-icon-color)' : 'url(#dark-icon-color)';
 </script>
 
 <svg
@@ -70,7 +69,7 @@
 	</defs>
 	<circle cx="50%" cy="50%" r="27.5%" class={topClass} filter={sideFilter} />
 	<image
-		xlink:href="/{speciesName(bee.species)}.svg"
+		xlink:href="/{bee.species}.svg"
 		x="35%"
 		y="35%"
 		width="30%"

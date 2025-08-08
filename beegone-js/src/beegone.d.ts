@@ -1,18 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
-export enum Color {
-  Light = 0,
-  Dark = 1,
+export enum InvalidBee {
+  InvalidColor = 0,
+  InvalidSpecies = 1,
 }
-export enum Species {
-  Drone = 0,
-  Worker = 1,
-  Nurse = 2,
-  Builder = 3,
-  Explorer = 4,
-  Guard = 5,
-  Queen = 6,
+export enum PerformError {
+  InvalidColor = 0,
+  InvalidSpecies = 1,
+  InvalidAction = 2,
 }
+type Color = "light" | "dark";
+type Species = "drone" | "worker" | "nurse" | "builder" | "explorer" | "guard" | "queen";
 export class Action {
   private constructor();
   free(): void;
@@ -33,7 +31,11 @@ export class Board {
   get(pos: Pos): Piece | undefined;
   static positions(): Pos[];
 }
-export class InvalidAction {
+export class InvalidColor {
+  private constructor();
+  free(): void;
+}
+export class InvalidSpecies {
   private constructor();
   free(): void;
 }

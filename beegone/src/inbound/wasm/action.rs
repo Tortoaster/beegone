@@ -2,9 +2,10 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     domain::action::{MoveAction, SpawnAction},
+    inbound::wasm::piece::WasmPiece,
     Action, Pos,
 };
-use crate::inbound::wasm::piece::WasmPiece;
+use crate::inbound::wasm::error::InvalidBee;
 
 #[wasm_bindgen(js_name = "Action")]
 #[derive(Copy, Clone)]
@@ -32,7 +33,10 @@ impl WasmAction {
     pub fn new_spawn(on: &Pos, spawn: &WasmPiece) -> Self {
         Self {
             move_action: None,
-            spawn_action: Some(WasmSpawnAction { on: *on, spawn: *spawn }),
+            spawn_action: Some(WasmSpawnAction {
+                on: *on,
+                spawn: *spawn,
+            }),
         }
     }
 }
@@ -52,11 +56,13 @@ impl From<Action> for WasmAction {
     }
 }
 
-impl From<WasmAction> for Action {
-    fn from(value: WasmAction) -> Self {
+impl TryFrom<WasmAction> for Action {
+    type Error = InvalidBee;
+
+    fn try_from(value: WasmAction) -> Result<Self, Self::Error> {
         match (value.move_action, value.spawn_action) {
-            (Some(move_action), None) => Action::Move(move_action.into()),
-            (None, Some(spawn_action)) => Action::Spawn(spawn_action.into()),
+            (Some(move_action), None) => Ok(Action::Move(move_action.into())),
+            (None, Some(spawn_action)) => Ok(Action::Spawn(spawn_action.try_into()?)),
             _ => unreachable!("invariant violated: an action must be either a move or a spawn"),
         }
     }
@@ -104,8 +110,10 @@ impl From<SpawnAction> for WasmSpawnAction {
     }
 }
 
-impl From<WasmSpawnAction> for SpawnAction {
-    fn from(value: WasmSpawnAction) -> Self {
-        SpawnAction::new(value.on, value.spawn.into())
+impl TryFrom<WasmSpawnAction> for SpawnAction {
+    type Error = InvalidBee;
+
+    fn try_from(value: WasmSpawnAction) -> Result<Self, InvalidBee> {
+        Ok(SpawnAction::new(value.on, value.spawn.try_into()?))
     }
 }
