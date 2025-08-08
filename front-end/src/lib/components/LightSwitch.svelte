@@ -3,24 +3,21 @@
 
 	const STORAGE_KEY = 'theme';
 
-	enum Theme {
-		Dark = 'dark',
-		Light = 'light',
-	}
+	type Theme = 'dark' | 'light';
 
-	const currentTheme = () => (localStorage.getItem(STORAGE_KEY) as Theme) ?? Theme.Light;
+	const currentTheme = () => (localStorage.getItem(STORAGE_KEY) as Theme) ?? 'light';
 
 	const toggleTheme = () => {
-		const toggledTheme = currentTheme() === Theme.Dark ? Theme.Light : Theme.Dark;
+		const toggledTheme = currentTheme() === 'dark' ? 'light' : 'dark';
 		localStorage.setItem(STORAGE_KEY, toggledTheme);
 		applyTheme(toggledTheme);
 	};
 
 	const applyTheme = (theme: Theme) => {
-		if (theme === Theme.Dark) {
-			document.documentElement.classList.add(Theme.Dark);
+		if (theme === 'dark') {
+			document.documentElement.classList.add('dark');
 		} else {
-			document.documentElement.classList.remove(Theme.Dark);
+			document.documentElement.classList.remove('dark');
 		}
 	};
 
