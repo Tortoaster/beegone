@@ -56,7 +56,7 @@ export class Pos {
 }
 export class State {
   free(): void;
-  constructor(players: number);
+  constructor();
   actionsFrom(pos: Pos): Action[];
   perform(action: Action): State;
   readonly board: Board;

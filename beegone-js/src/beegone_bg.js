@@ -405,11 +405,8 @@ export class State {
         const ret = wasm.__wbg_get_state_turn(this.__wbg_ptr);
         return ret;
     }
-    /**
-     * @param {number} players
-     */
-    constructor(players) {
-        const ret = wasm.state_new(players);
+    constructor() {
+        const ret = wasm.state_new();
         this.__wbg_ptr = ret >>> 0;
         StateFinalization.register(this, this.__wbg_ptr, this);
         return this;

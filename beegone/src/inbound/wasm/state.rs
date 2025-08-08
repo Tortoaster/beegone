@@ -1,12 +1,9 @@
-use std::sync::Mutex;
-use rival::Rival;
 use thiserror::Error;
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{player, Color, Pos, State};
+use crate::{Color, Pos, State};
 use crate::inbound::wasm::board::WasmBoard;
 use crate::inbound::wasm::action::WasmAction;
-use crate::player::Player;
 
 #[wasm_bindgen(js_name = "State")]
 #[derive(Clone)]
@@ -20,15 +17,7 @@ pub struct WasmState {
 #[wasm_bindgen(js_class = "State")]
 impl WasmState {
     #[wasm_bindgen(constructor)]
-    pub fn new(players: u8) -> Self {
-        let player = match players {
-            1 => Player::Computer(Mutex::new(Rival::new())),
-            2 => Player::Local,
-            _ => panic!("unsupported number of players"),
-        };
-
-        player::initialize(player);
-
+    pub fn new() -> Self {
         State::default().into()
     }
 

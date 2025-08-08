@@ -12,8 +12,8 @@ export type StateStore = {
 	perform: (action: Action) => void;
 } & Omit<Writable<State>, 'set' | 'update'>;
 
-export function createState(players: number): StateStore {
-	const store = writable(new State(players));
+export function createState(): StateStore {
+	const store = writable(new State());
 
 	return {
 		subscribe: store.subscribe,
