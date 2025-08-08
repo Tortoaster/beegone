@@ -2,7 +2,7 @@
 	import { Board, type Pos, State } from 'beegone';
 	import ActionButtonGroup from '$lib/components/ActionButtonGroup.svelte';
 	import BeeToken from '$lib/components/BeeToken.svelte';
-	import Polygon from '$lib/components/Polygon.svelte';
+	import Polygon from '$lib/svg/Polygon.svelte';
 
 	const VIEW_BOX = 360;
 	// The field is 7 tiles high, and a flat hexagon's height is `sin(60deg)`% of its size.
