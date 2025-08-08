@@ -1,4 +1,5 @@
 use std::ops::Not;
+
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
@@ -32,7 +33,6 @@ pub enum Species {
     Queen,
 }
 
-#[wasm_bindgen]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Bee {
     color: Color,

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
-	import type { Action, Piece } from '@beegone/beegone';
+	import type { Action, Piece } from 'beegone';
+	import { speciesName } from '$lib/species-name';
 
 	export let action: Action;
 	export let x = 0;
@@ -24,14 +25,14 @@
 		duration: 200,
 	};
 	$: icon =
-		action.type === 'move'
+		action.move
 			? piece === undefined
 				? 'move'
-				: piece.type === 'wall'
-				? 'dig'
-				: 'attack'
-			: action.content.spawn.inner.type === 'bee'
-			? action.content.spawn.inner.content.species
+				: piece.bee
+				? 'attack'
+				: 'dig'
+			: action.spawn?.spawn.bee
+			? speciesName(action.spawn?.spawn.bee.species)
 			: 'build';
 
 	const dispatch = createEventDispatcher();

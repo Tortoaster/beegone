@@ -9,7 +9,6 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-js-sys = "0.3.77"
 rival = { git = "https://github.com/Tortoaster/rival.git", rev = "e26c120" }
 thiserror = "2.0.12"
 tokio = { version = "1.32.0", features = ["time"] }

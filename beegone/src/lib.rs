@@ -1,10 +1,12 @@
-pub use domain::action::Action;
-pub use domain::board::Board;
-pub use domain::piece::{Bee, Color, Piece, Species};
-pub use domain::pos::Pos;
-pub use domain::state::State;
+pub use domain::{
+    action::Action,
+    board::Board,
+    piece::{Bee, Color, Piece, Species},
+    pos::Pos,
+    state::State,
+};
 
-mod player;
 mod domain;
-mod outbound;
 mod inbound;
+mod outbound;
+mod player;

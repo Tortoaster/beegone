@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Pos } from '@beegone/beegone';
-	import { createState } from '../stores/state';
+	import { Board, type Pos } from 'beegone';
+	import { createState, type StateStore } from '../stores/state';
 	import ActionButtonGroup from '../components/ActionButtonGroup.svelte';
 	import BeeToken from '../components/BeeToken.svelte';
 	import LightSwitch from '../components/LightSwitch.svelte';
@@ -14,36 +14,31 @@
 	const PADDED_TILE_RADIUS = PADDED_TILE_SIZE / 2;
 	const TILE_RADIUS = TILE_SIZE / 2;
 
-	let state = undefined;
+	let state: StateStore | undefined = undefined;
 
 	let selected: Pos | null = null;
 
-	$: actions = selected === null ? [] : state.actionsFrom(selected);
+	$: actions = selected ? state?.actionsFrom(selected) ?? [] : [];
 
 	const piecesOn = (pos: Pos) => {
-		const piece = state.get(pos);
-		return piece != null ? [piece] : [];
+		const piece = state?.get(pos);
+		return piece ? [piece] : [];
 	};
-
-	const x = (pos: Pos) => (3 / 2) * pos.q;
-	const y = (pos: Pos) => (Math.sqrt(3) / 2) * pos.q + Math.sqrt(3) * pos.r;
 
 	function select(pos: Pos) {
 		if (selected?.q === pos.q && selected.r === pos.r) {
 			selected = null;
 		} else {
-			let piece = state.get(pos);
-			if (piece?.inner.type === 'bee' && piece.inner.content.color === state.turn()) {
+			let piece = state?.get(pos);
+			if (piece?.bee && piece.bee.color === state?.turn()) {
 				selected = pos;
 			}
 		}
 	}
 
 	async function performAction(event: CustomEvent) {
-		await state.perform(event.detail.action);
-		await state.progress();
+		state?.perform(event.detail.action);
 		selected = null;
-		await state.progress();
 	}
 </script>
 
@@ -133,11 +128,11 @@
 					</feMerge>
 				</filter>
 			</defs>
-			{#each $state.positions() as pos}
+			{#each Board.positions() as pos}
 				<Polygon
 					class="transition-colors duration-300 fill-amber-700 dark:fill-slate-500"
-					cx={PADDED_TILE_RADIUS * x(pos)}
-					cy={PADDED_TILE_RADIUS * y(pos)}
+					cx={PADDED_TILE_RADIUS * pos.x}
+					cy={PADDED_TILE_RADIUS * pos.y}
 					r={TILE_RADIUS}
 					sides={6}
 					cornerRadius={8}
@@ -145,19 +140,30 @@
 				/>
 				<Polygon
 					class="transition-colors duration-300 fill-amber-800 dark:fill-slate-600"
-					cx={PADDED_TILE_RADIUS * x(pos)}
-					cy={PADDED_TILE_RADIUS * y(pos)}
+					cx={PADDED_TILE_RADIUS * pos.x}
+					cy={PADDED_TILE_RADIUS * pos.y}
 					r={TILE_RADIUS * 0.75}
 					sides={6}
 					cornerRadius={6}
 					filter="url(#tile-lower-filter)"
+					on:click={() => console.log(pos)}
 				/>
 				{#each piecesOn(pos) as piece}
-					{#if piece.inner.type === 'wall'}
+					{#if piece.bee}
+						<BeeToken
+							bee={piece.bee}
+							width={TILE_SIZE}
+							height={TILE_SIZE}
+							filter="url(#tile-lower-filter)"
+							x={PADDED_TILE_RADIUS * pos.x - TILE_RADIUS}
+							y={PADDED_TILE_RADIUS * pos.y - TILE_RADIUS}
+							on:click={() => select(pos)}
+						/>
+					{:else}
 						<Polygon
 							class="transition-colors duration-300 fill-amber-400 dark:fill-slate-400"
-							cx={PADDED_TILE_RADIUS * x(pos)}
-							cy={PADDED_TILE_RADIUS * y(pos)}
+							cx={PADDED_TILE_RADIUS * pos.x}
+							cy={PADDED_TILE_RADIUS * pos.y}
 							r={TILE_RADIUS}
 							sides={6}
 							cornerRadius={8}
@@ -165,36 +171,26 @@
 						/>
 						<Polygon
 							class="transition-colors duration-300 fill-amber-300 dark:fill-slate-300"
-							cx={PADDED_TILE_RADIUS * x(pos)}
-							cy={PADDED_TILE_RADIUS * y(pos)}
+							cx={PADDED_TILE_RADIUS * pos.x}
+							cy={PADDED_TILE_RADIUS * pos.y}
 							r={TILE_RADIUS * 0.75}
 							sides={6}
 							cornerRadius={6}
 							filter="url(#wall-higher-filter)"
 						/>
-					{:else}
-						<BeeToken
-							bee={piece.inner.content}
-							x={PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}
-							y={PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS}
-							width={TILE_SIZE}
-							height={TILE_SIZE}
-							filter="url(#tile-lower-filter)"
-							on:click={() => select(pos)}
-						/>
 					{/if}
 				{/each}
 				<ActionButtonGroup
-					cx={PADDED_TILE_RADIUS * x(pos)}
-					cy={PADDED_TILE_RADIUS * y(pos)}
+					cx={PADDED_TILE_RADIUS * pos.x}
+					cy={PADDED_TILE_RADIUS * pos.y}
 					r={PADDED_TILE_RADIUS / 2}
 					size={0.4 * TILE_SIZE}
 					actions={actions.filter((action) =>
-						action.type === 'move'
-							? action.content.to.q === pos.q && action.content.to.r === pos.r
-							: action.content.on.q === pos.q && action.content.on.r === pos.r
+						action.move
+							? action.move.to.q === pos.q && action.move.to.r === pos.r
+							: action.spawn ? action.spawn.on.q === pos.q && action.spawn.on.r === pos.r : {}
 					)}
-					piece={state.get(pos)?.inner}
+					piece={state.get(pos)}
 					{selected}
 					{pos}
 					on:action={performAction}

@@ -1,11 +1,5 @@
 /* tslint:disable */
 /* eslint-disable */
-export function stateNew(players: number): State;
-export function stateActionsFrom(state: State, pos: Pos): Action[];
-export function submitAction(action: Action): Promise<void>;
-export function stateProgress(state: State): Promise<State>;
-export function boardGet(board: Board, pos: Pos): Piece | undefined;
-export function boardPositions(): Pos[];
 export enum Color {
   Light = 0,
   Dark = 1,
@@ -22,38 +16,61 @@ export enum Species {
 export class Action {
   private constructor();
   free(): void;
-}
-export class ActionError {
-  private constructor();
-  free(): void;
+  static move(from: Pos, to: Pos): Action;
+  static spawn(on: Pos, spawn: Piece): Action;
+  readonly move: WasmMoveAction | undefined;
+  readonly spawn: WasmSpawnAction | undefined;
 }
 export class Bee {
-  private constructor();
   free(): void;
+  constructor(color: Color, species: Species);
+  readonly color: Color;
+  readonly species: Species;
 }
 export class Board {
   private constructor();
   free(): void;
+  get(pos: Pos): Piece | undefined;
+  static positions(): Pos[];
 }
-export class MoveAction {
+export class InvalidAction {
   private constructor();
   free(): void;
 }
 export class Piece {
   private constructor();
   free(): void;
+  /**
+   * If `None`, the piece is a wall.
+   */
+  readonly bee: Bee | undefined;
 }
 export class Pos {
-  private constructor();
   free(): void;
-  q: number;
-  r: number;
-}
-export class SpawnAction {
-  private constructor();
-  free(): void;
+  constructor(q: number, r: number);
+  readonly q: number;
+  readonly r: number;
+  readonly s: number;
+  readonly x: number;
+  readonly y: number;
 }
 export class State {
+  free(): void;
+  constructor(players: number);
+  actionsFrom(pos: Pos): Action[];
+  perform(action: Action): State;
+  readonly board: Board;
+  readonly turn: Color;
+}
+export class WasmMoveAction {
   private constructor();
   free(): void;
+  readonly from: Pos;
+  readonly to: Pos;
+}
+export class WasmSpawnAction {
+  private constructor();
+  free(): void;
+  readonly on: Pos;
+  readonly spawn: Piece;
 }

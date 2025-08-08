@@ -1,4 +1,3 @@
-use wasm_bindgen::prelude::wasm_bindgen;
 use crate::domain::{piece::Piece, pos::Pos};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -7,7 +6,6 @@ pub enum Action {
     Spawn(SpawnAction),
 }
 
-#[wasm_bindgen]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct MoveAction {
     from: Pos,
@@ -28,7 +26,6 @@ impl MoveAction {
     }
 }
 
-#[wasm_bindgen]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct SpawnAction {
     on: Pos,

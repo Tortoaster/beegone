@@ -4,21 +4,6 @@ export function __wbg_set_wasm(val) {
 }
 
 
-function addToExternrefTable0(obj) {
-    const idx = wasm.__externref_table_alloc();
-    wasm.__wbindgen_export_2.set(idx, obj);
-    return idx;
-}
-
-function handleError(f, args) {
-    try {
-        return f.apply(this, args);
-    } catch (e) {
-        const idx = addToExternrefTable0(e);
-        wasm.__wbindgen_exn_store(idx);
-    }
-}
-
 const cachedTextDecoder = (typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true }) : { decode: () => { throw Error('TextDecoder not available') } } );
 
 if (typeof TextDecoder !== 'undefined') { cachedTextDecoder.decode(); };
@@ -35,49 +20,6 @@ function getUint8ArrayMemory0() {
 function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
-}
-
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
-
-const CLOSURE_DTORS = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(state => {
-    wasm.__wbindgen_export_3.get(state.dtor)(state.a, state.b)
-});
-
-function makeMutClosure(arg0, arg1, dtor, f) {
-    const state = { a: arg0, b: arg1, cnt: 1, dtor };
-    const real = (...args) => {
-        // First up with a closure we increment the internal reference
-        // count. This ensures that the Rust closure environment won't
-        // be deallocated while we're invoking it.
-        state.cnt++;
-        const a = state.a;
-        state.a = 0;
-        try {
-            return f(a, state.b, ...args);
-        } finally {
-            if (--state.cnt === 0) {
-                wasm.__wbindgen_export_3.get(state.dtor)(a, state.b);
-                CLOSURE_DTORS.unregister(state);
-            } else {
-                state.a = a;
-            }
-        }
-    };
-    real.original = state;
-    CLOSURE_DTORS.register(real, state, state);
-    return real;
-}
-/**
- * @param {number} players
- * @returns {State}
- */
-export function stateNew(players) {
-    const ret = wasm.stateNew(players);
-    return State.__wrap(ret);
 }
 
 function _assertClass(instance, klass) {
@@ -100,81 +42,17 @@ function getArrayJsValueFromWasm0(ptr, len) {
     const mem = getDataViewMemory0();
     const result = [];
     for (let i = ptr; i < ptr + 4 * len; i += 4) {
-        result.push(wasm.__wbindgen_export_2.get(mem.getUint32(i, true)));
+        result.push(wasm.__wbindgen_export_0.get(mem.getUint32(i, true)));
     }
     wasm.__externref_drop_slice(ptr, len);
     return result;
 }
-/**
- * @param {State} state
- * @param {Pos} pos
- * @returns {Action[]}
- */
-export function stateActionsFrom(state, pos) {
-    _assertClass(state, State);
-    var ptr0 = state.__destroy_into_raw();
-    _assertClass(pos, Pos);
-    var ptr1 = pos.__destroy_into_raw();
-    const ret = wasm.stateActionsFrom(ptr0, ptr1);
-    var v3 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-    return v3;
-}
 
-/**
- * @param {Action} action
- * @returns {Promise<void>}
- */
-export function submitAction(action) {
-    _assertClass(action, Action);
-    var ptr0 = action.__destroy_into_raw();
-    const ret = wasm.submitAction(ptr0);
-    return ret;
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_0.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
 }
-
-/**
- * @param {State} state
- * @returns {Promise<State>}
- */
-export function stateProgress(state) {
-    _assertClass(state, State);
-    var ptr0 = state.__destroy_into_raw();
-    const ret = wasm.stateProgress(ptr0);
-    return ret;
-}
-
-/**
- * @param {Board} board
- * @param {Pos} pos
- * @returns {Piece | undefined}
- */
-export function boardGet(board, pos) {
-    _assertClass(board, Board);
-    var ptr0 = board.__destroy_into_raw();
-    _assertClass(pos, Pos);
-    var ptr1 = pos.__destroy_into_raw();
-    const ret = wasm.boardGet(ptr0, ptr1);
-    return ret === 0 ? undefined : Piece.__wrap(ret);
-}
-
-/**
- * @returns {Pos[]}
- */
-export function boardPositions() {
-    const ret = wasm.boardPositions();
-    var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-    return v1;
-}
-
-function __wbg_adapter_18(arg0, arg1, arg2) {
-    wasm.closure88_externref_shim(arg0, arg1, arg2);
-}
-
-function __wbg_adapter_47(arg0, arg1, arg2, arg3) {
-    wasm.closure100_externref_shim(arg0, arg1, arg2, arg3);
-}
-
 /**
  * @enum {0 | 1}
  */
@@ -220,32 +98,41 @@ export class Action {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_action_free(ptr, 0);
     }
-}
-
-const ActionErrorFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_actionerror_free(ptr >>> 0, 1));
-
-export class ActionError {
-
-    static __wrap(ptr) {
-        ptr = ptr >>> 0;
-        const obj = Object.create(ActionError.prototype);
-        obj.__wbg_ptr = ptr;
-        ActionErrorFinalization.register(obj, obj.__wbg_ptr, obj);
-        return obj;
+    /**
+     * @returns {WasmMoveAction | undefined}
+     */
+    get move() {
+        const ret = wasm.__wbg_get_action_move(this.__wbg_ptr);
+        return ret === 0 ? undefined : WasmMoveAction.__wrap(ret);
     }
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        ActionErrorFinalization.unregister(this);
-        return ptr;
+    /**
+     * @returns {WasmSpawnAction | undefined}
+     */
+    get spawn() {
+        const ret = wasm.__wbg_get_action_spawn(this.__wbg_ptr);
+        return ret === 0 ? undefined : WasmSpawnAction.__wrap(ret);
     }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_actionerror_free(ptr, 0);
+    /**
+     * @param {Pos} from
+     * @param {Pos} to
+     * @returns {Action}
+     */
+    static move(from, to) {
+        _assertClass(from, Pos);
+        _assertClass(to, Pos);
+        const ret = wasm.action_move(from.__wbg_ptr, to.__wbg_ptr);
+        return Action.__wrap(ret);
+    }
+    /**
+     * @param {Pos} on
+     * @param {Piece} spawn
+     * @returns {Action}
+     */
+    static spawn(on, spawn) {
+        _assertClass(on, Pos);
+        _assertClass(spawn, Piece);
+        const ret = wasm.action_spawn(on.__wbg_ptr, spawn.__wbg_ptr);
+        return Action.__wrap(ret);
     }
 }
 
@@ -254,6 +141,14 @@ const BeeFinalization = (typeof FinalizationRegistry === 'undefined')
     : new FinalizationRegistry(ptr => wasm.__wbg_bee_free(ptr >>> 0, 1));
 
 export class Bee {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(Bee.prototype);
+        obj.__wbg_ptr = ptr;
+        BeeFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
@@ -266,6 +161,30 @@ export class Bee {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_bee_free(ptr, 0);
     }
+    /**
+     * @returns {Color}
+     */
+    get color() {
+        const ret = wasm.__wbg_get_bee_color(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {Species}
+     */
+    get species() {
+        const ret = wasm.__wbg_get_bee_species(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {Color} color
+     * @param {Species} species
+     */
+    constructor(color, species) {
+        const ret = wasm.bee_new(color, species);
+        this.__wbg_ptr = ret >>> 0;
+        BeeFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
 }
 
 const BoardFinalization = (typeof FinalizationRegistry === 'undefined')
@@ -273,6 +192,14 @@ const BoardFinalization = (typeof FinalizationRegistry === 'undefined')
     : new FinalizationRegistry(ptr => wasm.__wbg_board_free(ptr >>> 0, 1));
 
 export class Board {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(Board.prototype);
+        obj.__wbg_ptr = ptr;
+        BoardFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
@@ -285,24 +212,50 @@ export class Board {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_board_free(ptr, 0);
     }
+    /**
+     * @param {Pos} pos
+     * @returns {Piece | undefined}
+     */
+    get(pos) {
+        _assertClass(pos, Pos);
+        const ret = wasm.board_get(this.__wbg_ptr, pos.__wbg_ptr);
+        return ret === 0 ? undefined : Piece.__wrap(ret);
+    }
+    /**
+     * @returns {Pos[]}
+     */
+    static positions() {
+        const ret = wasm.board_positions();
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        return v1;
+    }
 }
 
-const MoveActionFinalization = (typeof FinalizationRegistry === 'undefined')
+const InvalidActionFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_moveaction_free(ptr >>> 0, 1));
+    : new FinalizationRegistry(ptr => wasm.__wbg_invalidaction_free(ptr >>> 0, 1));
 
-export class MoveAction {
+export class InvalidAction {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(InvalidAction.prototype);
+        obj.__wbg_ptr = ptr;
+        InvalidActionFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
-        MoveActionFinalization.unregister(this);
+        InvalidActionFinalization.unregister(this);
         return ptr;
     }
 
     free() {
         const ptr = this.__destroy_into_raw();
-        wasm.__wbg_moveaction_free(ptr, 0);
+        wasm.__wbg_invalidaction_free(ptr, 0);
     }
 }
 
@@ -330,6 +283,14 @@ export class Piece {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_piece_free(ptr, 0);
+    }
+    /**
+     * If `None`, the piece is a wall.
+     * @returns {Bee | undefined}
+     */
+    get bee() {
+        const ret = wasm.__wbg_get_piece_bee(this.__wbg_ptr);
+        return ret === 0 ? undefined : Bee.__wrap(ret);
     }
 }
 
@@ -366,12 +327,6 @@ export class Pos {
         return ret;
     }
     /**
-     * @param {number} arg0
-     */
-    set q(arg0) {
-        wasm.__wbg_set_pos_q(this.__wbg_ptr, arg0);
-    }
-    /**
      * @returns {number}
      */
     get r() {
@@ -379,29 +334,35 @@ export class Pos {
         return ret;
     }
     /**
-     * @param {number} arg0
+     * @param {number} q
+     * @param {number} r
      */
-    set r(arg0) {
-        wasm.__wbg_set_pos_r(this.__wbg_ptr, arg0);
+    constructor(q, r) {
+        const ret = wasm.pos_new(q, r);
+        this.__wbg_ptr = ret >>> 0;
+        PosFinalization.register(this, this.__wbg_ptr, this);
+        return this;
     }
-}
-
-const SpawnActionFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_spawnaction_free(ptr >>> 0, 1));
-
-export class SpawnAction {
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        SpawnActionFinalization.unregister(this);
-        return ptr;
+    /**
+     * @returns {number}
+     */
+    get s() {
+        const ret = wasm.pos_s(this.__wbg_ptr);
+        return ret;
     }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_spawnaction_free(ptr, 0);
+    /**
+     * @returns {number}
+     */
+    get x() {
+        const ret = wasm.pos_x(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {number}
+     */
+    get y() {
+        const ret = wasm.pos_y(this.__wbg_ptr);
+        return ret;
     }
 }
 
@@ -430,6 +391,134 @@ export class State {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_state_free(ptr, 0);
     }
+    /**
+     * @returns {Board}
+     */
+    get board() {
+        const ret = wasm.__wbg_get_state_board(this.__wbg_ptr);
+        return Board.__wrap(ret);
+    }
+    /**
+     * @returns {Color}
+     */
+    get turn() {
+        const ret = wasm.__wbg_get_state_turn(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {number} players
+     */
+    constructor(players) {
+        const ret = wasm.state_new(players);
+        this.__wbg_ptr = ret >>> 0;
+        StateFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @param {Pos} pos
+     * @returns {Action[]}
+     */
+    actionsFrom(pos) {
+        _assertClass(pos, Pos);
+        const ret = wasm.state_actionsFrom(this.__wbg_ptr, pos.__wbg_ptr);
+        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+        return v1;
+    }
+    /**
+     * @param {Action} action
+     * @returns {State}
+     */
+    perform(action) {
+        _assertClass(action, Action);
+        const ret = wasm.state_perform(this.__wbg_ptr, action.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return State.__wrap(ret[0]);
+    }
+}
+
+const WasmMoveActionFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_wasmmoveaction_free(ptr >>> 0, 1));
+
+export class WasmMoveAction {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(WasmMoveAction.prototype);
+        obj.__wbg_ptr = ptr;
+        WasmMoveActionFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        WasmMoveActionFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_wasmmoveaction_free(ptr, 0);
+    }
+    /**
+     * @returns {Pos}
+     */
+    get from() {
+        const ret = wasm.__wbg_get_wasmmoveaction_from(this.__wbg_ptr);
+        return Pos.__wrap(ret);
+    }
+    /**
+     * @returns {Pos}
+     */
+    get to() {
+        const ret = wasm.__wbg_get_wasmmoveaction_to(this.__wbg_ptr);
+        return Pos.__wrap(ret);
+    }
+}
+
+const WasmSpawnActionFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_wasmspawnaction_free(ptr >>> 0, 1));
+
+export class WasmSpawnAction {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(WasmSpawnAction.prototype);
+        obj.__wbg_ptr = ptr;
+        WasmSpawnActionFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        WasmSpawnActionFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_wasmspawnaction_free(ptr, 0);
+    }
+    /**
+     * @returns {Pos}
+     */
+    get on() {
+        const ret = wasm.__wbg_get_wasmmoveaction_from(this.__wbg_ptr);
+        return Pos.__wrap(ret);
+    }
+    /**
+     * @returns {Piece}
+     */
+    get spawn() {
+        const ret = wasm.__wbg_get_wasmspawnaction_spawn(this.__wbg_ptr);
+        return Piece.__wrap(ret);
+    }
 }
 
 export function __wbg_action_new(arg0) {
@@ -437,42 +526,8 @@ export function __wbg_action_new(arg0) {
     return ret;
 };
 
-export function __wbg_actionerror_new(arg0) {
-    const ret = ActionError.__wrap(arg0);
-    return ret;
-};
-
-export function __wbg_call_672a4d21634d4a24() { return handleError(function (arg0, arg1) {
-    const ret = arg0.call(arg1);
-    return ret;
-}, arguments) };
-
-export function __wbg_call_7cccdd69e0791ae2() { return handleError(function (arg0, arg1, arg2) {
-    const ret = arg0.call(arg1, arg2);
-    return ret;
-}, arguments) };
-
-export function __wbg_new_23a2665fac83c611(arg0, arg1) {
-    try {
-        var state0 = {a: arg0, b: arg1};
-        var cb0 = (arg0, arg1) => {
-            const a = state0.a;
-            state0.a = 0;
-            try {
-                return __wbg_adapter_47(a, state0.b, arg0, arg1);
-            } finally {
-                state0.a = a;
-            }
-        };
-        const ret = new Promise(cb0);
-        return ret;
-    } finally {
-        state0.a = state0.b = 0;
-    }
-};
-
-export function __wbg_newnoargs_105ed471475aaf50(arg0, arg1) {
-    const ret = new Function(getStringFromWasm0(arg0, arg1));
+export function __wbg_invalidaction_new(arg0) {
+    const ret = InvalidAction.__wrap(arg0);
     return ret;
 };
 
@@ -481,67 +536,8 @@ export function __wbg_pos_new(arg0) {
     return ret;
 };
 
-export function __wbg_queueMicrotask_97d92b4fcc8a61c5(arg0) {
-    queueMicrotask(arg0);
-};
-
-export function __wbg_queueMicrotask_d3219def82552485(arg0) {
-    const ret = arg0.queueMicrotask;
-    return ret;
-};
-
-export function __wbg_resolve_4851785c9c5f573d(arg0) {
-    const ret = Promise.resolve(arg0);
-    return ret;
-};
-
-export function __wbg_state_new(arg0) {
-    const ret = State.__wrap(arg0);
-    return ret;
-};
-
-export function __wbg_static_accessor_GLOBAL_88a902d13a557d07() {
-    const ret = typeof global === 'undefined' ? null : global;
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-};
-
-export function __wbg_static_accessor_GLOBAL_THIS_56578be7e9f832b0() {
-    const ret = typeof globalThis === 'undefined' ? null : globalThis;
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-};
-
-export function __wbg_static_accessor_SELF_37c5d418e4bf5819() {
-    const ret = typeof self === 'undefined' ? null : self;
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-};
-
-export function __wbg_static_accessor_WINDOW_5de37043a91a9c40() {
-    const ret = typeof window === 'undefined' ? null : window;
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-};
-
-export function __wbg_then_44b73946d2fb3e7d(arg0, arg1) {
-    const ret = arg0.then(arg1);
-    return ret;
-};
-
-export function __wbindgen_cb_drop(arg0) {
-    const obj = arg0.original;
-    if (obj.cnt-- == 1) {
-        obj.a = 0;
-        return true;
-    }
-    const ret = false;
-    return ret;
-};
-
-export function __wbindgen_closure_wrapper346(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 89, __wbg_adapter_18);
-    return ret;
-};
-
 export function __wbindgen_init_externref_table() {
-    const table = wasm.__wbindgen_export_2;
+    const table = wasm.__wbindgen_export_0;
     const offset = table.grow(4);
     table.set(0, undefined);
     table.set(offset + 0, undefined);
@@ -549,21 +545,6 @@ export function __wbindgen_init_externref_table() {
     table.set(offset + 2, true);
     table.set(offset + 3, false);
     ;
-};
-
-export function __wbindgen_is_function(arg0) {
-    const ret = typeof(arg0) === 'function';
-    return ret;
-};
-
-export function __wbindgen_is_undefined(arg0) {
-    const ret = arg0 === undefined;
-    return ret;
-};
-
-export function __wbindgen_string_new(arg0, arg1) {
-    const ret = getStringFromWasm0(arg0, arg1);
-    return ret;
 };
 
 export function __wbindgen_throw(arg0, arg1) {

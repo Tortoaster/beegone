@@ -16,10 +16,7 @@ pub struct State {
 
 impl State {
     pub fn new(board: Board, turn: Color) -> Self {
-        Self {
-            board,
-            turn,
-        }
+        Self { board, turn }
     }
 
     pub fn actions<'a>(&'a self) -> impl Iterator<Item = Action> + 'a {

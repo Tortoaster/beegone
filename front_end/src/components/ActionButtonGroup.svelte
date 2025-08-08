@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Action, Pos, Piece } from '@beegone/beegone';
+	import { type Action, Piece, Pos } from 'beegone';
 	import ActionButton from './ActionButton.svelte';
 
 	export let cx = 0;
@@ -11,7 +11,7 @@
 	export let pos: Pos;
 	export let piece: Piece | undefined;
 
-	$: difference = selected === null ? pos : { q: selected.q - pos.q, r: selected.r - pos.r };
+	$: difference = selected === null ? pos : new Pos(selected.q - pos.q, selected.r - pos.r);
 	$: angle = selected === null ? 0 : Math.atan2(y(pos) - y(selected), x(pos) - x(selected));
 	$: delay = (angle + Math.PI) * 30 + length(difference) * 2 * Math.PI * 15;
 
@@ -27,7 +27,6 @@
 		fromX={cx}
 		fromY={cy}
 		{size}
-		{piece}
 		{delay}
 		action={actions[0]}
 		on:action
@@ -40,7 +39,6 @@
 			fromX={cx}
 			fromY={cy}
 			{size}
-			{piece}
 			{delay}
 			{action}
 			on:action

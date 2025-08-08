@@ -1,7 +1,7 @@
 run:
-    cd front-end && npm run dev
+    cd front_end && npm run dev
 i:
-    cd front-end && npm install
+    cd front_end && npm install
 build:
     cargo build --release --target wasm32-unknown-unknown --manifest-path beegone/Cargo.toml
     wasm-bindgen --browser --out-dir beegone-js/src beegone/target/wasm32-unknown-unknown/release/beegone.wasm

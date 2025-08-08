@@ -1,32 +1,25 @@
-import { get, writable } from 'svelte/store';
+import { get, type Writable, writable } from 'svelte/store';
 import {
-	boardGet,
-	boardPositions,
-	stateActionsFrom,
-	stateNew,
-	stateProgress,
-	submitAction,
-} from '../beegone/beegone';
-import type { Action, Pos } from '../beegone/types';
+	Color, Piece,
+	State
+} from 'beegone';
+import type { Action, Pos } from 'beegone';
 
-export function createState(players: number) {
-	const store = writable({
-		state: stateNew(players),
-		positions: () => boardPositions(),
-	});
+export type StateStore = {
+	get: (pos: Pos) => Piece | undefined;
+	turn: () => Color;
+	actionsFrom: (pos: Pos) => Action[];
+	perform: (action: Action) => void;
+} & Omit<Writable<State>, 'set' | 'update'>;
+
+export function createState(players: number): StateStore {
+	const store = writable(new State(players));
 
 	return {
 		subscribe: store.subscribe,
-		progress: async () => {
-			const state = await stateProgress(get(store).state);
-			store.update(({ positions }) => ({
-				state,
-				positions,
-			}));
-		},
-		get: (pos: Pos) => boardGet(get(store).state.board, pos),
-		turn: () => get(store).state.turn,
-		actionsFrom: (pos: Pos) => stateActionsFrom(get(store).state, pos),
-		perform: async (action: Action) => await submitAction(action),
+		get: (pos: Pos) => get(store).board.get(pos),
+		turn: () => get(store).turn,
+		actionsFrom: (pos: Pos) => get(store).actionsFrom(pos),
+		perform: (action: Action) => store.update((store) => store.perform(action))
 	};
 }
