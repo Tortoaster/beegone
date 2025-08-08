@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Board, type Pos } from 'beegone';
-	import { createState, type StateStore } from '../stores/state';
+	import { Board, type Pos, State } from 'beegone';
 	import ActionButtonGroup from '$lib/components/ActionButtonGroup.svelte';
 	import BeeToken from '$lib/components/BeeToken.svelte';
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
@@ -14,14 +13,13 @@
 	const PADDED_TILE_RADIUS = PADDED_TILE_SIZE / 2;
 	const TILE_RADIUS = TILE_SIZE / 2;
 
-	let state: StateStore = createState();
+	let gameState: State = $state(new State());
+	let selected: Pos | null = $state(null);
 
-	let selected: Pos | null = null;
-
-	$: actions = selected ? state?.actionsFrom(selected) ?? [] : [];
+	const actions = $derived(selected ? gameState.actionsFrom(selected) : []);
 
 	const piecesOn = (pos: Pos) => {
-		const piece = state?.get(pos);
+		const piece = gameState.board.get(pos);
 		return piece ? [piece] : [];
 	};
 
@@ -29,15 +27,15 @@
 		if (selected?.q === pos.q && selected.r === pos.r) {
 			selected = null;
 		} else {
-			let piece = state?.get(pos);
-			if (piece?.bee && piece.bee.color === state?.turn()) {
+			let piece = gameState.board.get(pos);
+			if (piece?.bee && piece.bee.color === gameState.turn) {
 				selected = pos;
 			}
 		}
 	}
 
 	async function performAction(event: CustomEvent) {
-		state?.perform(event.detail.action);
+		gameState = gameState.perform(event.detail.action);
 		selected = null;
 	}
 </script>
@@ -154,7 +152,7 @@
 							? action.move.to.q === pos.q && action.move.to.r === pos.r
 							: action.spawn ? action.spawn.on.q === pos.q && action.spawn.on.r === pos.r : {}
 					)}
-				piece={state.get(pos)}
+				piece={gameState.board.get(pos)}
 				{selected}
 				{pos}
 				on:action={performAction}
