@@ -10,7 +10,7 @@ export enum PerformError {
   InvalidAction = 2,
 }
 type Color = "light" | "dark";
-type Species = "drone" | "worker" | "nurse" | "builder" | "explorer" | "guard" | "queen";
+type Species = "drone" | "worker" | "nurse" | "builder" | "explorer" | "queen" | "guard";
 export class Action {
   private constructor();
   free(): void;

@@ -1,10 +1,9 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    inbound::wasm::{color::WasmColor, species::WasmSpecies},
+    inbound::wasm::{color::WasmColor, error::InvalidBee, species::WasmSpecies},
     Bee,
 };
-use crate::inbound::wasm::error::{InvalidBee};
 
 #[wasm_bindgen(js_name = "Bee")]
 #[derive(Copy, Clone)]

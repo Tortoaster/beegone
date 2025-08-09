@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
-use crate::Color;
-use crate::inbound::wasm::error::InvalidColor;
+
+use crate::{inbound::wasm::error::InvalidColor, Color};
 
 #[wasm_bindgen(js_name = "Color")]
 #[derive(Copy, Clone)]

@@ -46,7 +46,7 @@ impl State {
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
 
         // All bees can jump over adjacent bees of the same color, as long as the tile
-        // they land on is empty
+        // they land on is empty or capturable
         let leaps = Shift::directions()
             .filter(move |shift| {
                 self.board
@@ -71,7 +71,7 @@ impl State {
                 self.board
                     .get(adj)
                     .as_ref()
-                    .map(|other| piece.can_capture(&other))
+                    .map(|other| piece.can_capture(other))
                     .unwrap_or_default()
             })
             .map(move |adj| Action::Move(MoveAction::new(from, adj)));
@@ -189,21 +189,26 @@ impl State {
                     .find(|a| *a == action)
                     .ok_or("illegal move")?;
 
-                let piece = self.board.get(&move_action.from()).unwrap();
-                self.board.set(move_action.from(), None);
-                self.board.set(move_action.to(), Some(piece));
+                let piece = self.board.set(move_action.from(), None).ok_or("no piece to move")?;
+                let capture = self.board.set(move_action.to(), Some(piece));
+                
+                if !matches!(capture, Some(Piece::Bee(_))) {
+                    self.turn = !self.turn;
+                }
+
+                Ok(())
             }
             Action::Spawn(spawn_action) => {
                 // TODO: Legal?
 
                 self.board
                     .set(spawn_action.on(), Some(spawn_action.spawn()));
+
+                self.turn = !self.turn;
+
+                Ok(())
             }
         }
-
-        self.turn = !self.turn;
-
-        Ok(())
     }
 
     pub fn perform_unchecked(&mut self, action: Action) {

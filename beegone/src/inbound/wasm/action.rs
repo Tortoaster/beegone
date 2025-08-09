@@ -2,10 +2,9 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     domain::action::{MoveAction, SpawnAction},
-    inbound::wasm::piece::WasmPiece,
+    inbound::wasm::{error::InvalidBee, piece::WasmPiece},
     Action, Pos,
 };
-use crate::inbound::wasm::error::InvalidBee;
 
 #[wasm_bindgen(js_name = "Action")]
 #[derive(Copy, Clone)]

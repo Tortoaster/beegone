@@ -1,10 +1,14 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    inbound::wasm::{action::WasmAction, board::WasmBoard, color::WasmColor, error::PerformError},
+    inbound::wasm::{
+        action::WasmAction,
+        board::WasmBoard,
+        color::WasmColor,
+        error::{InvalidBee, PerformError},
+    },
     Action, Pos, State,
 };
-use crate::inbound::wasm::error::InvalidBee;
 
 #[wasm_bindgen(js_name = "State")]
 #[derive(Clone)]

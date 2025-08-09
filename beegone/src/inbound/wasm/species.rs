@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
-use crate::inbound::wasm::error::InvalidSpecies;
-use crate::Species;
+
+use crate::{inbound::wasm::error::InvalidSpecies, Species};
 
 #[wasm_bindgen(js_name = "Species")]
 #[derive(Copy, Clone)]
@@ -10,8 +10,8 @@ pub enum WasmSpecies {
     Nurse = "nurse",
     Builder = "builder",
     Explorer = "explorer",
-    Guard = "guard",
     Queen = "queen",
+    Guard = "guard",
 }
 
 impl From<Species> for WasmSpecies {
@@ -22,8 +22,8 @@ impl From<Species> for WasmSpecies {
             Species::Nurse => WasmSpecies::Nurse,
             Species::Builder => WasmSpecies::Builder,
             Species::Explorer => WasmSpecies::Explorer,
-            Species::Guard => WasmSpecies::Guard,
             Species::Queen => WasmSpecies::Queen,
+            Species::Guard => WasmSpecies::Guard,
         }
     }
 }
@@ -38,10 +38,9 @@ impl TryFrom<WasmSpecies> for Species {
             WasmSpecies::Nurse => Ok(Species::Nurse),
             WasmSpecies::Builder => Ok(Species::Builder),
             WasmSpecies::Explorer => Ok(Species::Explorer),
-            WasmSpecies::Guard => Ok(Species::Guard),
             WasmSpecies::Queen => Ok(Species::Queen),
+            WasmSpecies::Guard => Ok(Species::Guard),
             _ => Err(InvalidSpecies),
         }
     }
 }
-

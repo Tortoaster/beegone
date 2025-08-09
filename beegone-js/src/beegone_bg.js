@@ -71,7 +71,7 @@ export const PerformError = Object.freeze({
 
 const __wbindgen_enum_Color = ["light", "dark"];
 
-const __wbindgen_enum_Species = ["drone", "worker", "nurse", "builder", "explorer", "guard", "queen"];
+const __wbindgen_enum_Species = ["drone", "worker", "nurse", "builder", "explorer", "queen", "guard"];
 
 const ActionFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }

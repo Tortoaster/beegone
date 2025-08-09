@@ -113,17 +113,10 @@ impl Board {
         self.pieces.get(pos).copied()
     }
 
-    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) {
+    pub fn set(&mut self, pos: Pos, piece: Option<Piece>) -> Option<Piece> {
         match piece {
-            None => {
-                self.pieces.remove(&pos);
-            }
-            Some(piece) => {
-                self.pieces
-                    .entry(pos)
-                    .and_modify(|p| *p = piece)
-                    .or_insert(piece);
-            }
+            None => self.pieces.remove(&pos),
+            Some(piece) => self.pieces.insert(pos, piece),
         }
     }
 
