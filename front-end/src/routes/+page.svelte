@@ -18,11 +18,6 @@
 
   const actions = $derived(selected ? gameState.actionsFrom(selected) : []);
 
-  const piecesOn = (pos: Pos) => {
-    const piece = gameState.board.get(pos);
-    return piece ? [piece] : [];
-  };
-
   function select(pos: Pos) {
     if (selected?.q === pos.q && selected.r === pos.r) {
       selected = null;
@@ -49,81 +44,22 @@
     width="100%"
     height="100%"
   >
-    <defs>
-      <filter id="tile-lower-filter" y="-20%" height="140%">
-        <feOffset dy="4" />
-      </filter>
-      <filter id="tile-filter">
-        <feOffset dy="4" result="Offset" />
-        <feComposite
-          operator="out"
-          in="SourceGraphic"
-          in2="Offset"
-          result="Side"
-        />
-        <feFlood
-          class="flood-amber-600"
-          result="Shadow"
-        />
-        <feComposite operator="in" in="Shadow" in2="Side" result="Side" />
-        <feMerge>
-          <feMergeNode in="SourceGraphic" />
-          <feMergeNode in="Side" />
-        </feMerge>
-      </filter>
-      <filter id="wall-higher-filter" y="-25%" height="125%">
-        <feOffset dy="-8" />
-      </filter>
-      <filter id="wall-filter" x="0%" y="-25%" width="100%" height="125%">
-        <feFlood
-          class="flood-amber-600"
-          result="Color"
-        />
-        <feComposite
-          operator="in"
-          in="Color"
-          in2="SourceGraphic"
-          result="Shadow"
-        />
-        <feOffset in="SourceGraphic" dy="-8" result="Offset" />
-        <feFlood class="flood-amber-600" />
-        <feOffset dy={TILE_RADIUS} result="Below" />
-        <feFlood height={PADDED_TILE_RADIUS + 6} result="Above" />
-        <feComposite operator="in" in="Below" in2="Above" result="Side" />
-        <feMerge>
-          <feMergeNode in="Shadow" />
-          <feMergeNode in="Side" />
-          <feMergeNode in="Offset" />
-        </feMerge>
-      </filter>
-    </defs>
     {#each Board.positions() as pos}
-      <Polygon
-        class="fill-amber-700"
-        cx={PADDED_TILE_RADIUS * pos.x}
-        cy={PADDED_TILE_RADIUS * pos.y}
-        r={TILE_RADIUS}
-        sides={6}
-        cornerRadius={8}
-        filter="url(#tile-filter)"
-      />
-      <Polygon
-        class="fill-amber-800"
-        cx={PADDED_TILE_RADIUS * pos.x}
-        cy={PADDED_TILE_RADIUS * pos.y}
-        r={TILE_RADIUS * 0.75}
-        sides={6}
-        cornerRadius={6}
-        filter="url(#tile-lower-filter)"
-        onclick={() => console.log(pos)}
-      />
-      {#each piecesOn(pos) as piece}
+      {@const piece = gameState.board.get(pos)}
+      {#if piece}
         {#if piece.bee}
+          <Polygon
+            class="fill-amber-700"
+            cx={PADDED_TILE_RADIUS * pos.x}
+            cy={PADDED_TILE_RADIUS * pos.y}
+            r={TILE_RADIUS}
+            sides={6}
+            cornerRadius={8}
+          />
           <BeeToken
             bee={piece.bee}
             width={TILE_SIZE}
             height={TILE_SIZE}
-            filter="url(#tile-lower-filter)"
             x={PADDED_TILE_RADIUS * pos.x - TILE_RADIUS}
             y={PADDED_TILE_RADIUS * pos.y - TILE_RADIUS}
             onclick={() => select(pos)}
@@ -136,19 +72,18 @@
             r={TILE_RADIUS}
             sides={6}
             cornerRadius={8}
-            filter="url(#wall-filter)"
-          />
-          <Polygon
-            class="fill-amber-300"
-            cx={PADDED_TILE_RADIUS * pos.x}
-            cy={PADDED_TILE_RADIUS * pos.y}
-            r={TILE_RADIUS * 0.75}
-            sides={6}
-            cornerRadius={6}
-            filter="url(#wall-higher-filter)"
           />
         {/if}
-      {/each}
+      {:else}
+        <Polygon
+          class="fill-amber-700"
+          cx={PADDED_TILE_RADIUS * pos.x}
+          cy={PADDED_TILE_RADIUS * pos.y}
+          r={TILE_RADIUS}
+          sides={6}
+          cornerRadius={8}
+        />
+      {/if}
       <ActionButtonGroup
         cx={PADDED_TILE_RADIUS * pos.x}
         cy={PADDED_TILE_RADIUS * pos.y}
