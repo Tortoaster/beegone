@@ -13,10 +13,6 @@
   }
 
   const { bee, filter, x, y, width, height, onclick }: Props = $props();
-
-  const topClass = $derived(
-    bee.color === "light" ? "fill-amber-300" : "fill-amber-900 ",
-  );
 </script>
 
 <svg
@@ -29,8 +25,20 @@
   {x}
   {y}
 >
-  <circle cx="50%" cy="50%" r="27.5%" class={topClass} />
+  <circle
+    cx="50%"
+    cy="50%"
+    r="27.5%"
+    class={{
+      "fill-primary": bee.color === "light",
+      "fill-black": bee.color === "dark",
+    }}
+  />
   <SpeciesIcon
+    class={{
+      "fill-black": bee.color === "light",
+      "fill-white": bee.color === "dark",
+    }}
     species={bee.species}
     x="35%"
     y="35%"

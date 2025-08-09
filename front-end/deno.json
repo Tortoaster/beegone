@@ -1,3 +1,6 @@
 {
-  "unstable": ["fmt-component"]
+  "unstable": ["fmt-component"],
+  "fmt": {
+    "exclude": ["src/app.css"]
+  }
 }
