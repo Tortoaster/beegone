@@ -9,8 +9,8 @@
     x: number;
     y: number;
     size: number;
-    fromX: number;
-    fromY: number;
+    dx: number;
+    dy: number;
     piece: Piece | undefined;
     delay: number;
     onaction: (action: Action) => void;
@@ -22,23 +22,24 @@
     y,
     size,
     piece,
-    fromX,
-    fromY,
+    dx,
+    dy,
     delay,
     onclick,
     onaction,
+    class: classValue,
     ...props
   }: ActionButtonProps = $props();
 
   const inTransition: FlyParams = $derived({
-    x: fromX - x,
-    y: fromY - y,
-    delay: (Math.atan2(y - fromY, x - fromX) + Math.PI) * 30 + delay,
+    x: dx,
+    y: dy,
+    delay: (Math.atan2(-dy, -dx) + Math.PI) * 30 + delay,
     duration: 200,
   });
   const outTransition: FlyParams = $derived({
-    x: x - fromX,
-    y: y - fromY,
+    x: -dx,
+    y: -dy,
     duration: 200,
   });
 </script>
@@ -49,30 +50,23 @@
   y={y - size / 2}
   width={size}
   height={size}
-  class="group cursor-pointer select-none"
-  in:fly|global={inTransition}
-  out:fly|global={outTransition}
+  class={["group cursor-pointer", classValue]}
   onclick={(e) => {
     onclick?.(e);
     onaction(action);
   }}
+  in:fly={inTransition}
+  out:fly={outTransition}
   {...props}
 >
-  <defs>
-    <filter id="make-white">
-      <feFlood flood-color="white" />
-      <feComposite operator="in" in2="SourceGraphic" />
-    </filter>
-  </defs>
   <circle class="fill-black group-hover:fill-white" cx="50%" cy="50%" r="50%" />
   <ActionIcon
     {action}
     {piece}
-    class="group-hover:filter-none"
+    class="fill-white group-hover:fill-black"
     x="25%"
     y="25%"
     width="50%"
     height="50%"
-    filter="url(#make-white)"
   />
 </svg>

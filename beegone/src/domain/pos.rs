@@ -2,7 +2,7 @@ use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Pos {
     #[wasm_bindgen(readonly)]

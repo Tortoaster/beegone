@@ -48,6 +48,14 @@ export class Piece {
   readonly bee: Bee | undefined;
 }
 export class Pos {
+/**
+** Return copy of self without private attributes.
+*/
+  toJSON(): Object;
+/**
+* Return stringified version of self.
+*/
+  toString(): string;
   free(): void;
   constructor(q: number, r: number);
   readonly q: number;

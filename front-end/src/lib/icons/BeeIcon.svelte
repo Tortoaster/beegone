@@ -1,29 +1,18 @@
 <script lang="ts">
+  import type { SVGAttributes } from "svelte/elements";
   import { type Bee } from "beegone";
   import SpeciesIcon from "$lib/icons/SpeciesIcon.svelte";
 
-  interface Props {
+  interface Props extends SVGAttributes<SVGElement> {
     bee: Bee;
-    filter?: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    onclick?: () => void;
   }
 
-  const { bee, filter, x, y, width, height, onclick }: Props = $props();
+  const { bee, ...props }: Props = $props();
 </script>
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  class="cursor-pointer select-none"
-  {onclick}
-  {filter}
-  {width}
-  {height}
-  {x}
-  {y}
+  {...props}
 >
   <circle
     cx="50%"

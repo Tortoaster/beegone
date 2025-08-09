@@ -6,7 +6,7 @@
   interface Props extends
     Omit<
       ActionButtonProps,
-      "action" | "x" | "y" | "fromX" | "fromY" | "delay"
+      "action" | "x" | "y" | "dx" | "dy" | "delay"
     > {
     actions: Action[];
     cx: number;
@@ -35,28 +35,21 @@
   const delay = $derived(
     (angle + Math.PI) * 30 + length(difference) * 2 * Math.PI * 15,
   );
+
+  // FIXME: Duplicates code in ActionIcon.svelte, and also doesn't give compile-time errors when not handling all cases
+  const actionType = (action: Action, piece: Piece | undefined) => action.move ? (piece ? (piece.bee ? 'attack' : 'dig') : 'move') : action.spawn ? (action.spawn.spawn.bee ? action.spawn.spawn.bee.species : 'build') : 'unknown'
+  // Generates a unique ID for the same type of action on the same position, any other case will be rerendered
+  const id = (action: Action, piece: Piece | undefined, index: number, length: number) => `${actionType(action, piece)}-${index}-${length}`;
 </script>
 
-{#if actions.length === 1}
+{#each actions as action, index (id(action, props.piece, index, actions.length))}
   <ActionButton
-    action={actions[0]}
-    x={cx}
-    y={cy}
-    fromX={cx}
-    fromY={cy}
+    {action}
+    x={actions.length === 1 ? cx : cx + r * Math.cos(index * 2 * Math.PI / actions.length)}
+    y={actions.length === 1 ? cy : cy + r * Math.sin(index * 2 * Math.PI / actions.length)}
+    dx={actions.length === 1 ? 0 : -r * Math.cos(index * 2 * Math.PI / actions.length)}
+    dy={actions.length === 1 ? 0 : -r * Math.sin(index * 2 * Math.PI / actions.length)}
     {delay}
     {...props}
   />
-{:else}
-  {#each actions as action, index}
-    <ActionButton
-      {action}
-      x={cx + r * Math.cos((index / actions.length) * 2 * Math.PI)}
-      y={cy + r * Math.sin((index / actions.length) * 2 * Math.PI)}
-      fromX={cx}
-      fromY={cy}
-      {delay}
-      {...props}
-    />
-  {/each}
-{/if}
+{/each}

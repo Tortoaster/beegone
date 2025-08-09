@@ -319,6 +319,20 @@ export class Pos {
         return obj;
     }
 
+    toJSON() {
+        return {
+            q: this.q,
+            r: this.r,
+            s: this.s,
+            x: this.x,
+            y: this.y,
+        };
+    }
+
+    toString() {
+        return JSON.stringify(this);
+    }
+
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
         this.__wbg_ptr = 0;
