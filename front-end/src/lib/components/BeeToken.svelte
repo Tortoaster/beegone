@@ -1,26 +1,40 @@
 <script lang="ts">
 	import { type Bee } from 'beegone';
+	import SpeciesIcon from '$lib/icons/SpeciesIcon.svelte';
 
-	export let bee: Bee;
+	interface Props {
+		bee: Bee;
+		filter?: string;
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+		onclick?: () => void;
+	}
 
-	export let filter = '';
-	export let x: number | string = 0;
-	export let y: number | string = 0;
-	export let width: number | string = '100%';
-	export let height: number | string = '100%';
+	const { bee, filter, x, y, width, height, onclick }: Props = $props();
 
-	$: topClass =
+	const topClass = $derived(
 		bee.color === 'light'
-			? 'fill-amber-300'
-			: 'fill-amber-900 ';
-	$: sideFilter = bee.color === 'light' ? 'url(#light-token-side)' : 'url(#dark-token-side)';
-	$: iconFilter = bee.color === 'light' ? 'url(#light-icon-color)' : 'url(#dark-icon-color)';
+			? "fill-amber-300"
+			: "fill-amber-900 ",
+	);
+	const sideFilter = $derived(
+		bee.color === 'light'
+			? "url(#light-token-side)"
+			: "url(#dark-token-side)",
+	);
+	const iconFilter = $derived(
+		bee.color === 'light'
+			? "url(#light-icon-color)"
+			: "url(#dark-icon-color)",
+	);
 </script>
 
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	class="cursor-pointer select-none"
-	on:click
+	{onclick}
 	{filter}
 	{width}
 	{height}
@@ -68,12 +82,5 @@
 		</filter>
 	</defs>
 	<circle cx="50%" cy="50%" r="27.5%" class={topClass} filter={sideFilter} />
-	<image
-		xlink:href="/{bee.species}.svg"
-		x="35%"
-		y="35%"
-		width="30%"
-		height="30%"
-		filter={iconFilter}
-	/>
+	<SpeciesIcon species={bee.species} />
 </svg>

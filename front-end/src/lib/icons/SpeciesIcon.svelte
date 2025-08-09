@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Species } from 'beegone';
 	import Drone from '$lib/icons/Drone.svelte';
 	import Worker from '$lib/icons/Worker.svelte';
 	import Nurse from '$lib/icons/Nurse.svelte';
@@ -8,6 +7,7 @@
 	import Guard from '$lib/icons/Guard.svelte';
 	import Queen from '$lib/icons/Queen.svelte';
 	import { assertNever } from '$lib/assert-never';
+	import type { Species } from 'beegone';
 
 	interface Props {
 		species: Species;
@@ -16,19 +16,19 @@
 	const { species }: Props = $props();
 </script>
 
-{#if species === Species.Drone}
+{#if species === 'drone'}
 	<Drone />
-{:else if species === Species.Worker}
+{:else if species === 'worker'}
 	<Worker />
-{:else if species === Species.Nurse}
+{:else if species === 'nurse'}
 	<Nurse />
-{:else if species === Species.Explorer}
+{:else if species === 'explorer'}
 	<Explorer />
-{:else if species === Species.Builder}
+{:else if species === 'builder'}
 	<Builder />
-{:else if species === Species.Guard}
+{:else if species === 'guard'}
 	<Guard />
-{:else if species === Species.Queen}
+{:else if species === 'queen'}
 	<Queen />
 {:else}
 	{assertNever(species)}

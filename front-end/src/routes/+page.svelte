@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Board, type Pos, State } from 'beegone';
+	import { Action, Board, type Pos, State } from 'beegone';
 	import ActionButtonGroup from '$lib/components/ActionButtonGroup.svelte';
 	import BeeToken from '$lib/components/BeeToken.svelte';
 	import Polygon from '$lib/svg/Polygon.svelte';
@@ -33,8 +33,8 @@
 		}
 	}
 
-	async function performAction(event: CustomEvent) {
-		gameState = gameState.perform(event.detail.action);
+	async function performAction(action: Action) {
+		gameState = gameState.perform(action);
 		selected = null;
 	}
 </script>
@@ -104,7 +104,7 @@
 				sides={6}
 				cornerRadius={6}
 				filter="url(#tile-lower-filter)"
-				on:click={() => console.log(pos)}
+				onclick={() => console.log(pos)}
 			/>
 			{#each piecesOn(pos) as piece}
 				{#if piece.bee}
@@ -115,7 +115,7 @@
 						filter="url(#tile-lower-filter)"
 						x={PADDED_TILE_RADIUS * pos.x - TILE_RADIUS}
 						y={PADDED_TILE_RADIUS * pos.y - TILE_RADIUS}
-						on:click={() => select(pos)}
+						onclick={() => select(pos)}
 					/>
 				{:else}
 					<Polygon
@@ -151,7 +151,7 @@
 				piece={gameState.board.get(pos)}
 				{selected}
 				{pos}
-				on:action={performAction}
+				onaction={performAction}
 			/>
 		{/each}
 	</svg>

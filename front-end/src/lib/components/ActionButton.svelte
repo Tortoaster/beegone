@@ -1,45 +1,34 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { fly } from 'svelte/transition';
+	import type { SVGAttributes } from 'svelte/elements';
+	import { fly, type FlyParams } from 'svelte/transition';
 	import type { Action, Piece } from 'beegone';
 
-	export let action: Action;
-	export let x = 0;
-	export let y = 0;
-	export let size = 1;
-	export let piece: Piece | undefined = undefined;
-	export let fromX = 0;
-	export let fromY = 0;
-	export let delay = 0;
+	export interface ActionButtonProps extends SVGAttributes<SVGElement> {
+		action: Action;
+		x: number;
+		y: number;
+		size: number;
+		fromX: number;
+		fromY: number;
+		piece: Piece | undefined;
+		delay: number;
+		onaction: (action: Action) => void;
+	}
 
-	$: inTransition = {
+	const { action, x, y, size, piece, fromX, fromY, delay, onclick, onaction, ...props }: ActionButtonProps = $props();
+
+	const inTransition: FlyParams = $derived({
 		x: fromX - x,
 		y: fromY - y,
 		delay: (Math.atan2(y - fromY, x - fromX) + Math.PI) * 30 + delay,
-		duration: 200,
-	};
-	$: outTransition = {
+		duration: 200
+	});
+	const outTransition: FlyParams = $derived({
 		x: x - fromX,
 		y: y - fromY,
-		duration: 200,
-	};
-	$: icon =
-		action.move
-			? piece === undefined
-				? 'move'
-				: piece.bee
-				? 'attack'
-				: 'dig'
-			: action.spawn?.spawn.bee
-			? action.spawn?.spawn.bee.species
-			: 'build';
-
-	const dispatch = createEventDispatcher();
-	function dispatchAction() {
-		dispatch('action', {
-			action,
-		});
-	}
+		duration: 200
+	});
+	const icon: string = $derived(action.move ? piece === undefined ? 'move' : piece.bee ? 'attack' : 'dig' : action.spawn?.spawn.bee ? action.spawn?.spawn.bee.species : 'build');
 </script>
 
 <svg
@@ -51,7 +40,11 @@
 	class="group cursor-pointer select-none"
 	in:fly|global={inTransition}
 	out:fly|global={outTransition}
-	on:click={dispatchAction}
+	onclick={(e) => {
+		onclick?.(e)
+		onaction(action)
+	}}
+	{...props}
 >
 	<defs>
 		<filter id="make-white">
