@@ -59,11 +59,11 @@
   out:fly={outTransition}
   {...props}
 >
-  <circle class="fill-black group-hover:fill-white" cx="50%" cy="50%" r="50%" />
+  <circle class="transition-colors fill-accent-light group-hover:fill-accent" cx="50%" cy="50%" r="50%" />
   <ActionIcon
     {action}
     {piece}
-    class="fill-white group-hover:fill-black"
+    class="transition-colors fill-accent-dark group-hover:fill-white"
     x="25%"
     y="25%"
     width="50%"

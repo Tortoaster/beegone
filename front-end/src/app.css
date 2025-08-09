@@ -4,11 +4,15 @@
     --*: initial;
 
     --color-white: #fffefb;
-    --color-gray: #f8f3ec;
+    --color-white-dark: #f8f3ec;
     --color-black: #353231;
+    --color-black-dark: #191717;
+    --color-shadow: --alpha(var(--color-black-dark) / 50%);
     --color-primary: #f9d173;
-    --color-secondary: #cf9364;
-    --color-accent: #bcd7f8;
+    --color-primary-dark: #cf9364;
+    --color-accent-light: #bcd7f8;
+    --color-accent: #4069b6;
+    --color-accent-dark: #0e1736;
 
     --spacing-0: 0;
     --spacing-half: 1rem;
@@ -127,14 +131,16 @@
     --transition-duration-short: 100ms;
     --transition-duration-long: 400ms;
 
-    --default-transition-duration: 100ms;
+    --default-transition-duration: var(--transition-duration-short);
 
     --ease-linear: linear;
     --ease-in: cubic-bezier(0.4, 0, 1, 1);
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-    --default-transition-timing-function: linear;
+    --default-transition-timing-function: var(--ease-linear);
 }
 
-@layer components {}
+@utility flood-* {
+    flood-color: --value(--color-*);
+}
