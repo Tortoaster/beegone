@@ -9,6 +9,4 @@
   }
 </script>
 
-<div class="w-dvw h-dvh">
-  <BoardComponent {gameState} {onaction} />
-</div>
+<BoardComponent {gameState} {onaction} />

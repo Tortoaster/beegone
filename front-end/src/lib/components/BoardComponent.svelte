@@ -73,7 +73,7 @@
 </script>
 
 <svg
-  class="bg-white"
+  class="bg-white max-h-dvh"
   viewBox="{-VIEW_BOX / 2} {-VIEW_BOX / 2} {VIEW_BOX} {VIEW_BOX}"
   xmlns="http://www.w3.org/2000/svg"
   width="100%"
@@ -162,7 +162,7 @@
         "transition-colors",
         pos.q === selected?.q && pos.r === selected.r
           ? "fill-accent-light"
-          : "fill-primary-dark",
+          : "fill-white-dark",
         selectable && "cursor-pointer",
       ]}
 			filter="url(#inset-shadow-filter)"
