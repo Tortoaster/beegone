@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{inbound::wasm::error::InvalidSpecies, Species};
+use crate::{inbound::wasm::error::BeegoneError, Species};
 
 #[wasm_bindgen(js_name = "Species")]
 #[derive(Copy, Clone)]
@@ -29,7 +29,7 @@ impl From<Species> for WasmSpecies {
 }
 
 impl TryFrom<WasmSpecies> for Species {
-    type Error = InvalidSpecies;
+    type Error = BeegoneError;
 
     fn try_from(value: WasmSpecies) -> Result<Self, Self::Error> {
         match value {
@@ -40,7 +40,7 @@ impl TryFrom<WasmSpecies> for Species {
             WasmSpecies::Explorer => Ok(Species::Explorer),
             WasmSpecies::Queen => Ok(Species::Queen),
             WasmSpecies::Guard => Ok(Species::Guard),
-            _ => Err(InvalidSpecies),
+            _ => Err(BeegoneError::InvalidSpecies),
         }
     }
 }

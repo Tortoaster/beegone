@@ -2,12 +2,9 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
     inbound::wasm::{
-        action::WasmAction,
-        board::WasmBoard,
-        color::WasmColor,
-        error::{InvalidBee, PerformError},
+        action::WasmAction, board::WasmBoard, color::WasmColor, error::BeegoneError, pos::WasmPos,
     },
-    Action, Pos, State,
+    Action, State,
 };
 
 #[wasm_bindgen(js_name = "State")]
@@ -22,42 +19,45 @@ pub struct WasmState {
 #[wasm_bindgen(js_class = "State")]
 impl WasmState {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
-        State::default().into()
+    pub fn new() -> Result<Self, BeegoneError> {
+        State::default().try_into()
     }
 
     #[wasm_bindgen(js_name = "actionsFrom")]
-    pub fn actions_from(&self, pos: &Pos) -> Result<Vec<WasmAction>, InvalidBee> {
+    pub fn actions_from(&self, pos: WasmPos) -> Result<Vec<WasmAction>, BeegoneError> {
         Ok(State::try_from(self.clone())?
-            .actions_from(*pos)
-            .map(Into::into)
-            .collect())
+            .actions_from(pos.try_into()?)
+            .map(TryInto::try_into)
+            .collect::<Result<_, _>>()?)
     }
 
     #[wasm_bindgen]
-    pub fn perform(&mut self, action: &WasmAction) -> Result<WasmState, PerformError> {
+    pub fn perform(&mut self, action: &WasmAction) -> Result<WasmState, BeegoneError> {
         let mut state: State = self.clone().try_into()?;
         let action: Action = (*action).try_into()?;
         state
             .perform(action)
-            .map_err(|_| PerformError::InvalidAction)?;
-        Ok(state.into())
+            .map_err(|_| BeegoneError::InvalidAction)?;
+        Ok(state.try_into()?)
     }
 }
 
-impl From<State> for WasmState {
-    fn from(value: State) -> Self {
-        Self {
-            board: value.board().clone().into(),
-            turn: value.turn().into(),
-        }
+impl TryFrom<State> for WasmState {
+    type Error = BeegoneError;
+
+    fn try_from(value: State) -> Result<Self, BeegoneError> {
+        let (board, turn) = value.split();
+        Ok(Self {
+            board: board.try_into()?,
+            turn: turn.into(),
+        })
     }
 }
 
 impl TryFrom<WasmState> for State {
-    type Error = InvalidBee;
+    type Error = BeegoneError;
 
-    fn try_from(value: WasmState) -> Result<Self, InvalidBee> {
+    fn try_from(value: WasmState) -> Result<Self, BeegoneError> {
         Ok(State::new(value.board.try_into()?, value.turn.try_into()?))
     }
 }

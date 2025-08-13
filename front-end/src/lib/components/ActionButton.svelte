@@ -1,19 +1,19 @@
 <script lang="ts">
-  import type { SVGAttributes } from "svelte/elements";
-  import { fly, type FlyParams } from "svelte/transition";
-  import type { Action, Piece } from "beegone";
-  import ActionIcon from "$lib/icons/ActionIcon.svelte";
+  import type { SVGAttributes } from "svelte/elements"
+  import { fly, type FlyParams } from "svelte/transition"
+  import type { Action, Piece } from "beegone"
+  import ActionIcon from "$lib/icons/ActionIcon.svelte"
 
   export interface ActionButtonProps extends SVGAttributes<SVGElement> {
-    action: Action;
-    x: number;
-    y: number;
-    size: number;
-    dx: number;
-    dy: number;
-    piece: Piece | undefined;
-    delay: number;
-    onaction: (action: Action) => void;
+    action: Action
+    x: number
+    y: number
+    size: number
+    dx: number
+    dy: number
+    piece: Piece | undefined
+    delay: number
+    onaction: (action: Action) => void
   }
 
   const {
@@ -29,19 +29,19 @@
     onaction,
     class: classValue,
     ...props
-  }: ActionButtonProps = $props();
+  }: ActionButtonProps = $props()
 
   const inTransition: FlyParams = $derived({
     x: dx,
     y: dy,
     delay: (Math.atan2(-dy, -dx) + Math.PI) * 30 + delay,
     duration: 200,
-  });
+  })
   const outTransition: FlyParams = $derived({
     x: -dx,
     y: -dy,
     duration: 200,
-  });
+  })
 </script>
 
 <svg
@@ -52,14 +52,19 @@
   height={size}
   class={["group cursor-pointer", classValue]}
   onclick={(e) => {
-    onclick?.(e);
-    onaction(action);
+    onclick?.(e)
+    onaction(action)
   }}
   in:fly={inTransition}
   out:fly={outTransition}
   {...props}
 >
-  <circle class="transition-colors fill-accent-light group-hover:fill-accent" cx="50%" cy="50%" r="50%" />
+  <circle
+    class="transition-colors fill-accent-light group-hover:fill-accent"
+    cx="50%"
+    cy="50%"
+    r="50%"
+  />
   <ActionIcon
     {action}
     {piece}

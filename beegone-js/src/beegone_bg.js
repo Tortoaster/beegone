@@ -22,10 +22,52 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_0.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
+}
+
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
     }
+}
+/**
+ * @param {Pos} pos
+ * @returns {number}
+ */
+export function x(pos) {
+    const ret = wasm.x((__wbindgen_enum_Pos.indexOf(pos) + 1 || 38) - 1);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return ret[0];
+}
+
+/**
+ * @param {Pos} pos
+ * @returns {number}
+ */
+export function y(pos) {
+    const ret = wasm.y((__wbindgen_enum_Pos.indexOf(pos) + 1 || 38) - 1);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return ret[0];
+}
+
+/**
+ * @param {Pos} from
+ * @param {Pos} to
+ * @returns {number}
+ */
+export function distance(from, to) {
+    const ret = wasm.distance((__wbindgen_enum_Pos.indexOf(from) + 1 || 38) - 1, (__wbindgen_enum_Pos.indexOf(to) + 1 || 38) - 1);
+    if (ret[2]) {
+        throw takeFromExternrefTable0(ret[1]);
+    }
+    return ret[0];
 }
 
 let cachedDataViewMemory0 = null;
@@ -47,29 +89,19 @@ function getArrayJsValueFromWasm0(ptr, len) {
     wasm.__externref_drop_slice(ptr, len);
     return result;
 }
-
-function takeFromExternrefTable0(idx) {
-    const value = wasm.__wbindgen_export_0.get(idx);
-    wasm.__externref_table_dealloc(idx);
-    return value;
-}
 /**
- * @enum {0 | 1}
+ * @enum {0 | 1 | 2 | 3}
  */
-export const InvalidBee = Object.freeze({
-    InvalidColor: 0, "0": "InvalidColor",
-    InvalidSpecies: 1, "1": "InvalidSpecies",
-});
-/**
- * @enum {0 | 1 | 2}
- */
-export const PerformError = Object.freeze({
+export const BeegoneError = Object.freeze({
     InvalidColor: 0, "0": "InvalidColor",
     InvalidSpecies: 1, "1": "InvalidSpecies",
     InvalidAction: 2, "2": "InvalidAction",
+    InvalidPos: 3, "3": "InvalidPos",
 });
 
 const __wbindgen_enum_Color = ["light", "dark"];
+
+const __wbindgen_enum_Pos = ["A4", "A5", "A6", "A7", "B3", "B4", "B5", "B6", "B7", "C2", "C3", "C4", "C5", "C6", "C7", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "E1", "E2", "E3", "E4", "E5", "E6", "F1", "F2", "F3", "F4", "F5", "G1", "G2", "G3", "G4"];
 
 const __wbindgen_enum_Species = ["drone", "worker", "nurse", "builder", "explorer", "queen", "guard"];
 
@@ -118,10 +150,11 @@ export class Action {
      * @returns {Action}
      */
     static move(from, to) {
-        _assertClass(from, Pos);
-        _assertClass(to, Pos);
-        const ret = wasm.action_move(from.__wbg_ptr, to.__wbg_ptr);
-        return Action.__wrap(ret);
+        const ret = wasm.action_move((__wbindgen_enum_Pos.indexOf(from) + 1 || 38) - 1, (__wbindgen_enum_Pos.indexOf(to) + 1 || 38) - 1);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return Action.__wrap(ret[0]);
     }
     /**
      * @param {Pos} on
@@ -129,9 +162,8 @@ export class Action {
      * @returns {Action}
      */
     static spawn(on, spawn) {
-        _assertClass(on, Pos);
         _assertClass(spawn, Piece);
-        const ret = wasm.action_spawn(on.__wbg_ptr, spawn.__wbg_ptr);
+        const ret = wasm.action_spawn((__wbindgen_enum_Pos.indexOf(on) + 1 || 38) - 1, spawn.__wbg_ptr);
         return Action.__wrap(ret);
     }
 }
@@ -148,6 +180,17 @@ export class Bee {
         obj.__wbg_ptr = ptr;
         BeeFinalization.register(obj, obj.__wbg_ptr, obj);
         return obj;
+    }
+
+    toJSON() {
+        return {
+            color: this.color,
+            species: this.species,
+        };
+    }
+
+    toString() {
+        return JSON.stringify(this);
     }
 
     __destroy_into_raw() {
@@ -217,56 +260,21 @@ export class Board {
      * @returns {Piece | undefined}
      */
     get(pos) {
-        _assertClass(pos, Pos);
-        const ret = wasm.board_get(this.__wbg_ptr, pos.__wbg_ptr);
-        return ret === 0 ? undefined : Piece.__wrap(ret);
+        const ret = wasm.board_get(this.__wbg_ptr, (__wbindgen_enum_Pos.indexOf(pos) + 1 || 38) - 1);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] === 0 ? undefined : Piece.__wrap(ret[0]);
     }
     /**
      * @returns {Pos[]}
      */
     static positions() {
         const ret = wasm.board_positions();
-        var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
-        wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-        return v1;
-    }
-}
-
-const InvalidColorFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_invalidcolor_free(ptr >>> 0, 1));
-
-export class InvalidColor {
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        InvalidColorFinalization.unregister(this);
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_invalidcolor_free(ptr, 0);
-    }
-}
-
-const InvalidSpeciesFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_invalidspecies_free(ptr >>> 0, 1));
-
-export class InvalidSpecies {
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        InvalidSpeciesFinalization.unregister(this);
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_invalidspecies_free(ptr, 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
 }
 
@@ -282,6 +290,16 @@ export class Piece {
         obj.__wbg_ptr = ptr;
         PieceFinalization.register(obj, obj.__wbg_ptr, obj);
         return obj;
+    }
+
+    toJSON() {
+        return {
+            bee: this.bee,
+        };
+    }
+
+    toString() {
+        return JSON.stringify(this);
     }
 
     __destroy_into_raw() {
@@ -302,92 +320,6 @@ export class Piece {
     get bee() {
         const ret = wasm.__wbg_get_piece_bee(this.__wbg_ptr);
         return ret === 0 ? undefined : Bee.__wrap(ret);
-    }
-}
-
-const PosFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_pos_free(ptr >>> 0, 1));
-
-export class Pos {
-
-    static __wrap(ptr) {
-        ptr = ptr >>> 0;
-        const obj = Object.create(Pos.prototype);
-        obj.__wbg_ptr = ptr;
-        PosFinalization.register(obj, obj.__wbg_ptr, obj);
-        return obj;
-    }
-
-    toJSON() {
-        return {
-            q: this.q,
-            r: this.r,
-            s: this.s,
-            x: this.x,
-            y: this.y,
-        };
-    }
-
-    toString() {
-        return JSON.stringify(this);
-    }
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        PosFinalization.unregister(this);
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_pos_free(ptr, 0);
-    }
-    /**
-     * @returns {number}
-     */
-    get q() {
-        const ret = wasm.__wbg_get_pos_q(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-     * @returns {number}
-     */
-    get r() {
-        const ret = wasm.__wbg_get_pos_r(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-     * @param {number} q
-     * @param {number} r
-     */
-    constructor(q, r) {
-        const ret = wasm.pos_new(q, r);
-        this.__wbg_ptr = ret >>> 0;
-        PosFinalization.register(this, this.__wbg_ptr, this);
-        return this;
-    }
-    /**
-     * @returns {number}
-     */
-    get s() {
-        const ret = wasm.pos_s(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-     * @returns {number}
-     */
-    get x() {
-        const ret = wasm.pos_x(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-     * @returns {number}
-     */
-    get y() {
-        const ret = wasm.pos_y(this.__wbg_ptr);
-        return ret;
     }
 }
 
@@ -432,7 +364,10 @@ export class State {
     }
     constructor() {
         const ret = wasm.state_new();
-        this.__wbg_ptr = ret >>> 0;
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0] >>> 0;
         StateFinalization.register(this, this.__wbg_ptr, this);
         return this;
     }
@@ -441,8 +376,7 @@ export class State {
      * @returns {Action[]}
      */
     actionsFrom(pos) {
-        _assertClass(pos, Pos);
-        const ret = wasm.state_actionsFrom(this.__wbg_ptr, pos.__wbg_ptr);
+        const ret = wasm.state_actionsFrom(this.__wbg_ptr, (__wbindgen_enum_Pos.indexOf(pos) + 1 || 38) - 1);
         if (ret[3]) {
             throw takeFromExternrefTable0(ret[2]);
         }
@@ -494,14 +428,14 @@ export class WasmMoveAction {
      */
     get from() {
         const ret = wasm.__wbg_get_wasmmoveaction_from(this.__wbg_ptr);
-        return Pos.__wrap(ret);
+        return __wbindgen_enum_Pos[ret];
     }
     /**
      * @returns {Pos}
      */
     get to() {
         const ret = wasm.__wbg_get_wasmmoveaction_to(this.__wbg_ptr);
-        return Pos.__wrap(ret);
+        return __wbindgen_enum_Pos[ret];
     }
 }
 
@@ -534,8 +468,8 @@ export class WasmSpawnAction {
      * @returns {Pos}
      */
     get on() {
-        const ret = wasm.__wbg_get_wasmmoveaction_to(this.__wbg_ptr);
-        return Pos.__wrap(ret);
+        const ret = wasm.__wbg_get_wasmspawnaction_on(this.__wbg_ptr);
+        return __wbindgen_enum_Pos[ret];
     }
     /**
      * @returns {Piece}
@@ -551,8 +485,13 @@ export function __wbg_action_new(arg0) {
     return ret;
 };
 
-export function __wbg_pos_new(arg0) {
-    const ret = Pos.__wrap(arg0);
+export function __wbg_new_78feb108b6472713() {
+    const ret = new Array();
+    return ret;
+};
+
+export function __wbg_push_737cfc8c1432c2c6(arg0, arg1) {
+    const ret = arg0.push(arg1);
     return ret;
 };
 
@@ -569,6 +508,11 @@ export function __wbindgen_init_externref_table() {
 
 export function __wbindgen_number_new(arg0) {
     const ret = arg0;
+    return ret;
+};
+
+export function __wbindgen_string_new(arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1);
     return ret;
 };
 

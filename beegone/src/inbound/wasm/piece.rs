@@ -1,11 +1,11 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    inbound::wasm::{bee::WasmBee, error::InvalidBee},
+    inbound::wasm::{bee::WasmBee, error::BeegoneError},
     Piece,
 };
 
-#[wasm_bindgen(js_name = "Piece")]
+#[wasm_bindgen(js_name = "Piece", inspectable)]
 #[derive(Copy, Clone)]
 pub struct WasmPiece {
     /// If `None`, the piece is a wall.
@@ -25,7 +25,7 @@ impl From<Piece> for WasmPiece {
 }
 
 impl TryFrom<WasmPiece> for Piece {
-    type Error = InvalidBee;
+    type Error = BeegoneError;
 
     fn try_from(value: WasmPiece) -> Result<Self, Self::Error> {
         match value.bee {

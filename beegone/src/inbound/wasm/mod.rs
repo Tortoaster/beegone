@@ -4,5 +4,6 @@ mod board;
 mod color;
 mod error;
 mod piece;
+mod pos;
 mod species;
 mod state;

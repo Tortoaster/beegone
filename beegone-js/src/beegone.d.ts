@@ -1,15 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
-export enum InvalidBee {
-  InvalidColor = 0,
-  InvalidSpecies = 1,
-}
-export enum PerformError {
+export function x(pos: Pos): number;
+export function y(pos: Pos): number;
+export function distance(from: Pos, to: Pos): number;
+export enum BeegoneError {
   InvalidColor = 0,
   InvalidSpecies = 1,
   InvalidAction = 2,
+  InvalidPos = 3,
 }
 type Color = "light" | "dark";
+type Pos = "A4" | "A5" | "A6" | "A7" | "B3" | "B4" | "B5" | "B6" | "B7" | "C2" | "C3" | "C4" | "C5" | "C6" | "C7" | "D1" | "D2" | "D3" | "D4" | "D5" | "D6" | "D7" | "E1" | "E2" | "E3" | "E4" | "E5" | "E6" | "F1" | "F2" | "F3" | "F4" | "F5" | "G1" | "G2" | "G3" | "G4";
 type Species = "drone" | "worker" | "nurse" | "builder" | "explorer" | "queen" | "guard";
 export class Action {
   private constructor();
@@ -20,6 +21,14 @@ export class Action {
   readonly spawn: WasmSpawnAction | undefined;
 }
 export class Bee {
+/**
+** Return copy of self without private attributes.
+*/
+  toJSON(): Object;
+/**
+* Return stringified version of self.
+*/
+  toString(): string;
   free(): void;
   constructor(color: Color, species: Species);
   readonly color: Color;
@@ -31,23 +40,8 @@ export class Board {
   get(pos: Pos): Piece | undefined;
   static positions(): Pos[];
 }
-export class InvalidColor {
-  private constructor();
-  free(): void;
-}
-export class InvalidSpecies {
-  private constructor();
-  free(): void;
-}
 export class Piece {
   private constructor();
-  free(): void;
-  /**
-   * If `None`, the piece is a wall.
-   */
-  readonly bee: Bee | undefined;
-}
-export class Pos {
 /**
 ** Return copy of self without private attributes.
 */
@@ -57,12 +51,10 @@ export class Pos {
 */
   toString(): string;
   free(): void;
-  constructor(q: number, r: number);
-  readonly q: number;
-  readonly r: number;
-  readonly s: number;
-  readonly x: number;
-  readonly y: number;
+  /**
+   * If `None`, the piece is a wall.
+   */
+  readonly bee: Bee | undefined;
 }
 export class State {
   free(): void;

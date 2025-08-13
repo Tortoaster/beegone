@@ -1,11 +1,11 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::{
-    inbound::wasm::{color::WasmColor, error::InvalidBee, species::WasmSpecies},
+    inbound::wasm::{color::WasmColor, error::BeegoneError, species::WasmSpecies},
     Bee,
 };
 
-#[wasm_bindgen(js_name = "Bee")]
+#[wasm_bindgen(js_name = "Bee", inspectable)]
 #[derive(Copy, Clone)]
 pub struct WasmBee {
     #[wasm_bindgen(readonly)]
@@ -32,7 +32,7 @@ impl From<Bee> for WasmBee {
 }
 
 impl TryFrom<WasmBee> for Bee {
-    type Error = InvalidBee;
+    type Error = BeegoneError;
 
     fn try_from(value: WasmBee) -> Result<Self, Self::Error> {
         Ok(Bee::new(value.color.try_into()?, value.species.try_into()?))

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Action, State } from "beegone";
-  import BoardComponent from "$lib/components/BoardComponent.svelte";
+  import { Action, State } from "beegone"
+  import BoardComponent from "$lib/components/BoardComponent.svelte"
 
-  let gameState: State = $state(new State());
+  let gameState: State = $state(new State())
 
   function onaction(action: Action) {
-    gameState = gameState.perform(action);
+    gameState = gameState.perform(action)
   }
 </script>
 

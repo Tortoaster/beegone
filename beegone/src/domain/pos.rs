@@ -1,35 +1,21 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-use wasm_bindgen::prelude::wasm_bindgen;
-
-#[wasm_bindgen(inspectable)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct Pos {
-    #[wasm_bindgen(readonly)]
     pub q: i32,
-    #[wasm_bindgen(readonly)]
     pub r: i32,
 }
 
-#[wasm_bindgen]
 impl Pos {
-    #[wasm_bindgen(constructor)]
-    pub fn new(q: i32, r: i32) -> Self {
-        Pos { q, r }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn s(&self) -> i32 {
+    pub fn s(self) -> i32 {
         -self.q - self.r
     }
 
-    #[wasm_bindgen(getter)]
-    pub fn x(&self) -> f32 {
+    pub fn x(self) -> f32 {
         1.5 * self.q as f32
     }
 
-    #[wasm_bindgen(getter)]
-    pub fn y(&self) -> f32 {
+    pub fn y(self) -> f32 {
         (3f32.sqrt() / 2.0) * self.q as f32 + 3f32.sqrt() * self.r as f32
     }
 }

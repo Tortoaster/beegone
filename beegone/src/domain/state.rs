@@ -189,9 +189,12 @@ impl State {
                     .find(|a| *a == action)
                     .ok_or("illegal move")?;
 
-                let piece = self.board.set(move_action.from(), None).ok_or("no piece to move")?;
+                let piece = self
+                    .board
+                    .set(move_action.from(), None)
+                    .ok_or("no piece to move")?;
                 let capture = self.board.set(move_action.to(), Some(piece));
-                
+
                 if !matches!(capture, Some(Piece::Bee(_))) {
                     self.turn = !self.turn;
                 }
@@ -231,7 +234,8 @@ impl State {
         self.turn
     }
 
-    pub fn board(&self) -> &Board {
-        &self.board
+    // Used by WASM bindings
+    pub(crate) fn split(self) -> (Board, Color) {
+        (self.board, self.turn)
     }
 }

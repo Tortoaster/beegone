@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::{inbound::wasm::error::InvalidColor, Color};
+use crate::{inbound::wasm::error::BeegoneError, Color};
 
 #[wasm_bindgen(js_name = "Color")]
 #[derive(Copy, Clone)]
@@ -19,13 +19,13 @@ impl From<Color> for WasmColor {
 }
 
 impl TryFrom<WasmColor> for Color {
-    type Error = InvalidColor;
+    type Error = BeegoneError;
 
     fn try_from(value: WasmColor) -> Result<Self, Self::Error> {
         match value {
             WasmColor::Light => Ok(Color::Light),
             WasmColor::Dark => Ok(Color::Dark),
-            _ => Err(InvalidColor),
+            _ => Err(BeegoneError::InvalidColor),
         }
     }
 }

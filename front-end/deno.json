@@ -1,6 +1,8 @@
 {
   "unstable": ["fmt-component"],
   "fmt": {
-    "exclude": ["src/app.css"]
+    "exclude": ["src/app.css"],
+    "lineWidth": 100,
+    "semiColons": false
   }
 }

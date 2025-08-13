@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { SVGAttributes } from "svelte/elements";
-  import { type Bee } from "beegone";
-  import SpeciesIcon from "$lib/icons/SpeciesIcon.svelte";
+  import type { SVGAttributes } from "svelte/elements"
+  import { type Bee } from "beegone"
+  import SpeciesIcon from "$lib/icons/SpeciesIcon.svelte"
 
   interface Props extends SVGAttributes<SVGElement> {
-    bee: Bee;
+    bee: Bee
   }
 
-  const { bee, ...props }: Props = $props();
+  const { bee, ...props }: Props = $props()
 </script>
 
 <svg
