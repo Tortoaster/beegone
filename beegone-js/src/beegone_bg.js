@@ -103,7 +103,7 @@ const __wbindgen_enum_Color = ["light", "dark"];
 
 const __wbindgen_enum_Pos = ["A4", "A5", "A6", "A7", "B3", "B4", "B5", "B6", "B7", "C2", "C3", "C4", "C5", "C6", "C7", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "E1", "E2", "E3", "E4", "E5", "E6", "F1", "F2", "F3", "F4", "F5", "G1", "G2", "G3", "G4"];
 
-const __wbindgen_enum_Species = ["drone", "worker", "nurse", "builder", "explorer", "queen", "guard"];
+const __wbindgen_enum_Species = ["drone", "worker", "nurse", "explorer", "builder", "queen", "guard"];
 
 const ActionFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
