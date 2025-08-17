@@ -3,6 +3,7 @@
   import Polygon from "$lib/svg/Polygon.svelte"
   import ActionButtonGroup from "$lib/components/ActionButtonGroup.svelte"
   import BeeIcon from "$lib/icons/BeeIcon.svelte"
+  import FilterContext, { getFilters } from '$lib/svg/FilterContext.svelte';
 
   const VIEW_BOX = 360
   // The field is 7 tiles high, and a flat hexagon's height is `sin(60deg)`% of its size.
@@ -126,134 +127,66 @@
   width="100%"
   height="100%"
 >
-  <defs>
-    <filter id="inset-shadow-filter">
-      <feFlood class="flood-shadow" />
-      <feComposite operator="out" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="1" />
-      <feMerge>
-        <feMergeNode in="SourceGraphic" />
-        <feMergeNode />
-      </feMerge>
-      <feComposite operator="in" in2="SourceGraphic" />
-    </filter>
-    <filter id="light-shadow-filter">
-      <feFlood class="flood-primary-dark" />
-      <feComposite operator="out" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="-1" />
-      <feMerge>
-        <feMergeNode in="SourceGraphic" />
-        <feMergeNode />
-      </feMerge>
-      <feComposite operator="in" in2="SourceGraphic" result="Piece" />
-      <feFlood class="flood-shadow" />
-      <feComposite operator="in" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="1" />
-      <feMerge>
-        <feMergeNode />
-        <feMergeNode in="Piece" />
-      </feMerge>
-    </filter>
-    <filter id="dark-shadow-filter">
-      <feFlood class="flood-black-dark" />
-      <feComposite operator="out" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="-1" />
-      <feMerge>
-        <feMergeNode in="SourceGraphic" />
-        <feMergeNode />
-      </feMerge>
-      <feComposite operator="in" in2="SourceGraphic" result="Piece" />
-      <feFlood class="flood-shadow" />
-      <feComposite operator="in" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="1" />
-      <feMerge>
-        <feMergeNode />
-        <feMergeNode in="Piece" />
-      </feMerge>
-    </filter>
-    <filter id="accent-shadow-filter">
-      <feFlood class="flood-accent-dark" />
-      <feComposite operator="out" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="-1" />
-      <feMerge>
-        <feMergeNode in="SourceGraphic" />
-        <feMergeNode />
-      </feMerge>
-      <feComposite operator="in" in2="SourceGraphic" result="Piece" />
-      <feFlood class="flood-shadow" />
-      <feComposite operator="in" in2="SourceAlpha" />
-      <feGaussianBlur stdDeviation="1" />
-      <feOffset dy="1" />
-      <feMerge>
-        <feMergeNode />
-        <feMergeNode in="Piece" />
-      </feMerge>
-    </filter>
-  </defs>
-  {#each Board.positions() as pos (pos.toString())}
-    {@const selectable = canSelect(pos)}
-    <Polygon
-      cx={PADDED_TILE_RADIUS * x(pos)}
-      cy={PADDED_TILE_RADIUS * y(pos)}
-      r={TILE_RADIUS}
-      sides={6}
-      cornerRadius={8}
-      onclick={selectable ? () => select(pos) : undefined}
-      class={[
-        "transition-colors",
-        pos === selected ? "fill-accent-light" : "fill-white-dark",
-        selectable && "cursor-pointer",
-      ]}
-      filter="url(#inset-shadow-filter)"
-    />
-  {/each}
-  {#each pieces.entries() as [id, { piece, pos }] (id)}
-    {@const selectable = canSelect(pos)}
-    {#if piece.bee}
-      <BeeIcon
-        bee={piece.bee}
-        width={TILE_SIZE}
-        height={TILE_SIZE}
-        onclick={selectable ? () => select(pos) : undefined}
-        style={`transform: translate(${PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}px, ${
-          PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS
-        }px)`}
-        class={[
-          "transition-transform ease-out duration-long",
-          selectable && "cursor-pointer",
-        ]}
-        filter={piece.bee.color === "light" ? "url(#light-shadow-filter)" : "url(#dark-shadow-filter)"}
-      />
-    {:else}
+  <FilterContext>
+    {#each Board.positions() as pos (pos.toString())}
+      {@const selectable = canSelect(pos)}
       <Polygon
-        class="fill-primary"
-        filter="url(#light-shadow-filter)"
         cx={PADDED_TILE_RADIUS * x(pos)}
         cy={PADDED_TILE_RADIUS * y(pos)}
         r={TILE_RADIUS}
         sides={6}
         cornerRadius={8}
+        onclick={selectable ? () => select(pos) : undefined}
+        class={[
+          "transition-colors",
+          pos === selected ? "fill-accent-light" : "fill-white-dark",
+          selectable && "cursor-pointer",
+        ]}
+        filter={getFilters({ insetShadow: ['flood-shadow'] })}
       />
-    {/if}
-  {/each}
-  {#each Board.positions() as pos (pos.toString())}
-    <ActionButtonGroup
-      cx={PADDED_TILE_RADIUS * x(pos)}
-      cy={PADDED_TILE_RADIUS * y(pos)}
-      r={PADDED_TILE_RADIUS / 2}
-      size={0.4 * TILE_SIZE}
-      actions={actionsOnTile(actions, pos)}
-      piece={gameState.board.get(pos)}
-      filter="url(#accent-shadow-filter)"
-      {selected}
-      {pos}
-      {onaction}
-    />
-  {/each}
+    {/each}
+    {#each pieces.entries() as [id, { piece, pos }] (id)}
+      {@const selectable = canSelect(pos)}
+      {#if piece.bee}
+        <BeeIcon
+          bee={piece.bee}
+          width={TILE_SIZE}
+          height={TILE_SIZE}
+          onclick={selectable ? () => select(pos) : undefined}
+          style={`transform: translate(${PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}px, ${
+            PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS
+          }px)`}
+          class={[
+            "transition-transform ease-out duration-long",
+            selectable && "cursor-pointer",
+          ]}
+          filter={getFilters({ roundShadow: [piece.bee.color === "light" ? 'flood-primary-dark' : 'flood-black-dark'], shadow: ['flood-shadow'] })}
+        />
+      {:else}
+        <Polygon
+          class="fill-primary"
+          filter={getFilters({ roundShadow: ['flood-primary-dark'], shadow: ['flood-shadow'] })}
+          cx={PADDED_TILE_RADIUS * x(pos)}
+          cy={PADDED_TILE_RADIUS * y(pos)}
+          r={TILE_RADIUS}
+          sides={6}
+          cornerRadius={8}
+        />
+      {/if}
+    {/each}
+    {#each Board.positions() as pos (pos.toString())}
+      <ActionButtonGroup
+        cx={PADDED_TILE_RADIUS * x(pos)}
+        cy={PADDED_TILE_RADIUS * y(pos)}
+        r={PADDED_TILE_RADIUS / 2}
+        size={0.4 * TILE_SIZE}
+        actions={actionsOnTile(actions, pos)}
+        piece={gameState.board.get(pos)}
+        filter={getFilters({ roundShadow: ['flood-accent-dark'], shadow: ['flood-shadow'] })}
+        {selected}
+        {pos}
+        {onaction}
+      />
+    {/each}
+  </FilterContext>
 </svg>
