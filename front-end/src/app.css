@@ -129,6 +129,7 @@
     --aspect-card: 2 / 3;
 
     --transition-duration-short: 100ms;
+    --transition-duration-normal: 200ms;
     --transition-duration-long: 400ms;
 
     --default-transition-duration: var(--transition-duration-short);
@@ -143,4 +144,13 @@
 
 @utility flood-* {
     flood-color: --value(--color-*);
+}
+
+@layer utilities {
+    .initial-transform-0 {
+        @starting-style {
+            opacity: 0;
+            transform: translate(0, 0) !important;
+        }
+    }
 }

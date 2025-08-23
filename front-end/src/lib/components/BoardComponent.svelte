@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Action, Board, Piece, type Pos, State, x, y } from "beegone"
-  import ActionButtonGroup from "$lib/components/ActionButtonGroup.svelte"
+  import { Action, Board, distance, Piece, type Pos, State, x, y } from "beegone"
   import FilterContext, { getFilters } from "$lib/svg/FilterContext.svelte"
   import UseAnySymbol from "$lib/svg/symbols/UseAnySymbol.svelte"
   import AnySymbol from "$lib/svg/symbols/AnySymbol.svelte"
@@ -207,18 +206,46 @@
       {/if}
     {/each}
     {#each Board.positions() as pos (pos.toString())}
-      <ActionButtonGroup
-        cx={PADDED_TILE_RADIUS * x(pos)}
-        cy={PADDED_TILE_RADIUS * y(pos)}
-        r={PADDED_TILE_RADIUS / 2}
-        size={0.4 * TILE_SIZE}
-        actions={actionsOnTile(actions, pos)}
-        piece={gameState.board.get(pos)}
-        filter={getFilters({ roundShadow: ["flood-accent-dark"], shadow: ["flood-shadow"] })}
-        {selected}
-        {pos}
-        {onaction}
-      />
+      {@const posAngle = Math.atan2(y(pos) - y(selected ?? "D4"), x(pos) - x(selected ?? "D4"))}
+      {@const maxPosDelayDuration = 300}
+      {@const posDelay = (posAngle + Math.PI) / Math.PI / 2 * 0.8 * maxPosDelayDuration + distance(selected ?? pos, pos) / 6 * 0.2 * maxPosDelayDuration}
+      {@const centerX = PADDED_TILE_RADIUS * x(pos)}
+      {@const centerY = PADDED_TILE_RADIUS * y(pos)}
+      {@const actionsHere = actionsOnTile(actions, pos)}
+      {#key actionsHere}
+        {#each actionsHere as action, index}
+          {@const actionAngle = index * 2 * Math.PI / actionsHere.length}
+          {@const actionDelay = actionAngle / 2 / Math.PI * 200}
+          {@const actionRadius = (TILE_SIZE - PADDING) / 4}
+          {@const deltaX = actionsHere.length === 1 ? 0 : Math.cos(actionAngle) * (TILE_RADIUS - actionRadius)}
+          {@const deltaY = actionsHere.length === 1 ? 0 : Math.sin(actionAngle) * (TILE_RADIUS - actionRadius)}
+          <g
+            style={`transform: translate(${deltaX}px, ${deltaY}px); transition-delay: ${
+              posDelay + actionDelay
+            }ms;`}
+            class="group initial-transform-0 transition-all ease-out duration-normal cursor-pointer"
+            onclick={() => onaction(action)}
+          >
+            <circle
+              cx={centerX}
+              cy={centerY}
+              r={actionRadius}
+              class="transition-colors fill-accent-light group-hover:fill-accent"
+              filter={getFilters({ roundShadow: ["flood-accent-dark"], shadow: ["flood-shadow"] })}
+            />
+            <UseAnySymbol
+              type="action"
+              {action}
+              piece={gameState.board.get(pos)}
+              class="transition-colors fill-accent-dark group-hover:fill-white"
+              width={actionRadius}
+              height={actionRadius}
+              x={centerX - actionRadius / 2}
+              y={centerY - actionRadius / 2}
+            />
+          </g>
+        {/each}
+      {/key}
     {/each}
   </FilterContext>
 </svg>
