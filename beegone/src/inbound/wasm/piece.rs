@@ -13,6 +13,19 @@ pub struct WasmPiece {
     pub bee: Option<WasmBee>,
 }
 
+#[wasm_bindgen(js_class = "Piece")]
+impl WasmPiece {
+    #[wasm_bindgen(js_name = "bee")]
+    pub fn new_bee(bee: WasmBee) -> Self {
+        Self { bee: Some(bee) }
+    }
+
+    #[wasm_bindgen(js_name = "wall")]
+    pub fn new_wall() -> Self {
+        Self { bee: None }
+    }
+}
+
 impl From<Piece> for WasmPiece {
     fn from(value: Piece) -> Self {
         match value {

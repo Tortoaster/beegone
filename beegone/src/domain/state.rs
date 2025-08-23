@@ -23,7 +23,7 @@ impl State {
         Board::positions().flat_map(|pos| self.actions_from(pos))
     }
 
-    pub fn actions_from(&self, from: Pos) -> Actions {
+    pub fn actions_from(&self, from: Pos) -> Actions<'_> {
         let piece = match self.board.get(&from) {
             None => return Actions::None,
             Some(piece) => piece,

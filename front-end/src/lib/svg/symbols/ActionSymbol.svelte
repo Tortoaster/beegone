@@ -1,13 +1,13 @@
 <script lang="ts">
   import { Action, Piece } from "beegone"
   import type { SVGAttributes } from "svelte/elements"
-  import Move from "$lib/icons/Move.svelte"
-  import Attack from "$lib/icons/Attack.svelte"
-  import Dig from "$lib/icons/Dig.svelte"
-  import SpeciesIcon from "$lib/icons/SpeciesIcon.svelte"
-  import Build from "$lib/icons/Build.svelte"
+  import Move from "$lib/svg/symbols/icons/action/Move.svelte"
+  import Attack from "$lib/svg/symbols/icons/action/Attack.svelte"
+  import Dig from "$lib/svg/symbols/icons/action/Dig.svelte"
+  import SpeciesSymbol from "$lib/svg/symbols/SpeciesSymbol.svelte"
+  import Build from "$lib/svg/symbols/icons/action/Build.svelte"
 
-  interface Props extends SVGAttributes<SVGElement> {
+  interface Props extends SVGAttributes<SVGSymbolElement> {
     action: Action
     /**
      * The piece standing on the destination tile of the action.
@@ -17,6 +17,8 @@
 
   const { action, piece, ...props }: Props = $props()
 </script>
+
+<svelte:options namespace="svg" />
 
 {#if action.move}
   {#if piece}
@@ -30,7 +32,7 @@
   {/if}
 {:else if action.spawn}
   {#if action.spawn.spawn.bee}
-    <SpeciesIcon species={action.spawn.spawn.bee.species} {...props} />
+    <SpeciesSymbol species={action.spawn.spawn.bee.species} {...props} />
   {:else}
     <Build {...props} />
   {/if}

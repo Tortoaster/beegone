@@ -18,11 +18,11 @@ pub struct WasmAction {
 #[wasm_bindgen(js_class = "Action")]
 impl WasmAction {
     #[wasm_bindgen(js_name = "move")]
-    pub fn new_move(from: WasmPos, to: WasmPos) -> Result<Self, BeegoneError> {
-        Ok(Self {
+    pub fn new_move(from: WasmPos, to: WasmPos) -> Self {
+        Self {
             move_action: Some(WasmMoveAction { from, to }),
             spawn_action: None,
-        })
+        }
     }
 
     #[wasm_bindgen(js_name = "spawn")]

@@ -51,6 +51,8 @@ export class Piece {
 */
   toString(): string;
   free(): void;
+  static bee(bee: Bee): Piece;
+  static wall(): Piece;
   /**
    * If `None`, the piece is a wall.
    */

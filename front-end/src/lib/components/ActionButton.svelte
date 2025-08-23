@@ -2,7 +2,7 @@
   import type { SVGAttributes } from "svelte/elements"
   import { fly, type FlyParams } from "svelte/transition"
   import type { Action, Piece } from "beegone"
-  import ActionIcon from "$lib/icons/ActionIcon.svelte"
+  import UseAnySymbol from '$lib/svg/symbols/UseAnySymbol.svelte';
 
   export interface ActionButtonProps extends SVGAttributes<SVGElement> {
     action: Action
@@ -65,7 +65,8 @@
     cy="50%"
     r="50%"
   />
-  <ActionIcon
+  <UseAnySymbol
+    type="action"
     {action}
     {piece}
     class="transition-colors fill-accent-dark group-hover:fill-white"

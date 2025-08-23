@@ -1,14 +1,15 @@
 <script lang="ts">
   import { Action, Board, Piece, type Pos, State, x, y } from "beegone"
-  import Polygon from "$lib/svg/Polygon.svelte"
   import ActionButtonGroup from "$lib/components/ActionButtonGroup.svelte"
-  import BeeIcon from "$lib/icons/BeeIcon.svelte"
-  import FilterContext, { getFilters } from '$lib/svg/FilterContext.svelte';
+  import FilterContext, { getFilters } from "$lib/svg/FilterContext.svelte"
+  import UseAnySymbol from "$lib/svg/symbols/UseAnySymbol.svelte"
+  import AnySymbol from "$lib/svg/symbols/AnySymbol.svelte"
+  import { allSymbolProps } from "$lib/svg/symbols/any-symbol"
 
   const VIEW_BOX = 360
   // The field is 7 tiles high, and a flat hexagon's height is `sin(60deg)`% of its size.
   const PADDED_TILE_SIZE = VIEW_BOX / (7 * Math.sin(Math.PI / 3))
-  const PADDING = 5
+  const PADDING = 7.5
   const TILE_SIZE = PADDED_TILE_SIZE - PADDING
   const PADDED_TILE_RADIUS = PADDED_TILE_SIZE / 2
   const TILE_RADIUS = TILE_SIZE / 2
@@ -128,50 +129,81 @@
   height="100%"
 >
   <FilterContext>
+    {#each allSymbolProps as symbolProps}
+      <AnySymbol {symbolProps} />
+    {/each}
     {#each Board.positions() as pos (pos.toString())}
       {@const selectable = canSelect(pos)}
-      <Polygon
-        cx={PADDED_TILE_RADIUS * x(pos)}
-        cy={PADDED_TILE_RADIUS * y(pos)}
-        r={TILE_RADIUS}
-        sides={6}
-        cornerRadius={8}
-        onclick={selectable ? () => select(pos) : undefined}
+      <g
         class={[
           "transition-colors",
           pos === selected ? "fill-accent-light" : "fill-white-dark",
           selectable && "cursor-pointer",
         ]}
-        filter={getFilters({ insetShadow: ['flood-shadow'] })}
-      />
+        filter={getFilters({ insetShadow: ["flood-shadow"] })}
+      >
+        <UseAnySymbol
+          type="tile"
+          x={PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}
+          y={PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS}
+          width={TILE_SIZE}
+          height={TILE_SIZE}
+          onclick={selectable ? () => select(pos) : undefined}
+        />
+      </g>
     {/each}
     {#each pieces.entries() as [id, { piece, pos }] (id)}
       {@const selectable = canSelect(pos)}
       {#if piece.bee}
-        <BeeIcon
-          bee={piece.bee}
-          width={TILE_SIZE}
-          height={TILE_SIZE}
-          onclick={selectable ? () => select(pos) : undefined}
+        <g
           style={`transform: translate(${PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}px, ${
             PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS
           }px)`}
-          class={[
-            "transition-transform ease-out duration-long",
-            selectable && "cursor-pointer",
-          ]}
-          filter={getFilters({ roundShadow: [piece.bee.color === "light" ? 'flood-primary-dark' : 'flood-black-dark'], shadow: ['flood-shadow'] })}
-        />
+          class={["transition-transform ease-out duration-long", selectable && "cursor-pointer"]}
+          onclick={selectable ? () => select(pos) : undefined}
+        >
+          <circle
+            cx={TILE_RADIUS}
+            cy={TILE_RADIUS}
+            r={0.285 * TILE_SIZE}
+            class={{
+              "fill-primary": piece.bee.color === "light",
+              "fill-black": piece.bee.color === "dark",
+            }}
+            filter={getFilters({
+              roundShadow: [
+                piece.bee.color === "light" ? "flood-primary-dark" : "flood-black-dark",
+              ],
+              shadow: ["flood-shadow"],
+            })}
+          />
+          <UseAnySymbol
+            type="species"
+            species={piece.bee.species}
+            width={0.3 * TILE_SIZE}
+            height={0.3 * TILE_SIZE}
+            x={0.7 * TILE_RADIUS}
+            y={0.7 * TILE_RADIUS}
+            class={{
+              "fill-black": piece.bee.color === "light",
+              "fill-white": piece.bee.color === "dark",
+            }}
+          />
+        </g>
       {:else}
-        <Polygon
+        <g
           class="fill-primary"
-          filter={getFilters({ roundShadow: ['flood-primary-dark'], shadow: ['flood-shadow'] })}
-          cx={PADDED_TILE_RADIUS * x(pos)}
-          cy={PADDED_TILE_RADIUS * y(pos)}
-          r={TILE_RADIUS}
-          sides={6}
-          cornerRadius={8}
-        />
+          filter={getFilters({ roundShadow: ["flood-primary-dark"], shadow: ["flood-shadow"] })}
+        >
+          <UseAnySymbol
+            type="tile"
+            x={PADDED_TILE_RADIUS * x(pos) - TILE_RADIUS}
+            y={PADDED_TILE_RADIUS * y(pos) - TILE_RADIUS}
+            width={TILE_SIZE}
+            height={TILE_SIZE}
+            onclick={selectable ? () => select(pos) : undefined}
+          />
+        </g>
       {/if}
     {/each}
     {#each Board.positions() as pos (pos.toString())}
@@ -182,7 +214,7 @@
         size={0.4 * TILE_SIZE}
         actions={actionsOnTile(actions, pos)}
         piece={gameState.board.get(pos)}
-        filter={getFilters({ roundShadow: ['flood-accent-dark'], shadow: ['flood-shadow'] })}
+        filter={getFilters({ roundShadow: ["flood-accent-dark"], shadow: ["flood-shadow"] })}
         {selected}
         {pos}
         {onaction}

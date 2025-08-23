@@ -27,7 +27,7 @@
       distance(selected ?? pos, pos) * 2 * Math.PI * 15,
   )
 
-  // FIXME: Duplicates code in ActionIcon.svelte, and also doesn't give compile-time errors when not handling all cases
+  // FIXME: Duplicates code in ActionSymbol.svelte, and also doesn't give compile-time errors when not handling all cases
   const actionType = (action: Action, piece: Piece | undefined) =>
     action.move
       ? (piece ? (piece.bee ? "attack" : "dig") : "move")

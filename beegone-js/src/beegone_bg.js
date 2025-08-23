@@ -22,16 +22,16 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
-function takeFromExternrefTable0(idx) {
-    const value = wasm.__wbindgen_export_0.get(idx);
-    wasm.__externref_table_dealloc(idx);
-    return value;
-}
-
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
     }
+}
+
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_0.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
 }
 /**
  * @param {Pos} pos
@@ -151,10 +151,7 @@ export class Action {
      */
     static move(from, to) {
         const ret = wasm.action_move((__wbindgen_enum_Pos.indexOf(from) + 1 || 38) - 1, (__wbindgen_enum_Pos.indexOf(to) + 1 || 38) - 1);
-        if (ret[2]) {
-            throw takeFromExternrefTable0(ret[1]);
-        }
-        return Action.__wrap(ret[0]);
+        return Action.__wrap(ret);
     }
     /**
      * @param {Pos} on
@@ -320,6 +317,23 @@ export class Piece {
     get bee() {
         const ret = wasm.__wbg_get_piece_bee(this.__wbg_ptr);
         return ret === 0 ? undefined : Bee.__wrap(ret);
+    }
+    /**
+     * @param {Bee} bee
+     * @returns {Piece}
+     */
+    static bee(bee) {
+        _assertClass(bee, Bee);
+        var ptr0 = bee.__destroy_into_raw();
+        const ret = wasm.piece_bee(ptr0);
+        return Piece.__wrap(ret);
+    }
+    /**
+     * @returns {Piece}
+     */
+    static wall() {
+        const ret = wasm.piece_wall();
+        return Piece.__wrap(ret);
     }
 }
 
